@@ -1,38 +1,134 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://upgrade_menu"]
 
-[ext_resource path="res://assets/sprites/upgrade_background.png" type="Texture" id=1]
-[ext_resource path="res://assets/sprites/button.png" type="Texture" id=2]
+[ext_resource type="Script" path="res://scripts/upgrade_menu.gd" id="1_upgrade_script"]
 
-[node name="UpgradeMenu" type="Control"]
-rect_min_size = Vector2(400, 300)
+[node name="UpgradeMenu" type="CanvasLayer"]
+process_mode = 3
+visible = false
+script = ExtResource("1_upgrade_script")
 
-[node name="Background" type="TextureRect" parent="."]
-texture = ExtResource( 1 )
-expand = true
-
-[node name="UpgradeOptions" type="VBoxContainer" parent="Background"]
+[node name="Overlay" type="ColorRect" parent="."]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 10
-margin_top = 10
-margin_right = -10
-margin_bottom = -10
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
 
-[node name="UpgradeButton1" type="Button" parent="UpgradeOptions"]
-text = "Upgrade Health"
-texture_normal = ExtResource( 2 )
-
-[node name="UpgradeButton2" type="Button" parent="UpgradeOptions"]
-text = "Upgrade Damage"
-texture_normal = ExtResource( 2 )
-
-[node name="UpgradeButton3" type="Button" parent="UpgradeOptions"]
-text = "Upgrade Speed"
-texture_normal = ExtResource( 2 )
-
-[node name="CloseButton" type="Button" parent="UpgradeMenu"]
-text = "Close"
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_bottom = 10
-margin_left = 10
-margin_right = 10
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "UPGRADE AVAILABLE!"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "You have enough gold to purchase an upgrade!"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="UpgradeList" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="DamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "Attack Damage Boost"
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Increases your attack damage by 50%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Purchase (25 Gold)"
+
+[node name="BulletUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "Bullet Capacity"
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Increases bullet magazine capacity by 2"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Purchase (25 Gold)"
+
+[node name="Spacer3" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "Close"

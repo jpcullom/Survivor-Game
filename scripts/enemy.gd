@@ -15,8 +15,9 @@ var score_value: int = 100
 var player = null
 var health_bar = null
 
-# Preload health bar scene
+# Preload health bar scene and gold pickup
 var health_bar_scene = preload("res://scenes/ui/health_bar.tscn")
+var gold_pickup_scene = preload("res://scenes/items/gold_pickup.tscn")
 
 func _ready():
 	# Add to enemies group for easy player detection
@@ -80,4 +81,10 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	print("Enemy died! Awarding ", score_value, " points")
 	enemy_died.emit(score_value)
+	
+	# Drop gold at enemy position
+	var gold = gold_pickup_scene.instantiate()
+	get_parent().add_child(gold)
+	gold.global_position = global_position
+	
 	queue_free()

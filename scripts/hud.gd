@@ -2,9 +2,11 @@ extends CanvasLayer
 
 @onready var health_label = $Control/HealthContainer/HealthLabel
 @onready var score_label = $Control/ScoreLabel
+@onready var gold_label = $Control/GoldLabel
 
 var player = null
 var score = 0
+var gold = 0
 
 func _ready():
 	# Wait one frame for everything to be ready
@@ -19,6 +21,10 @@ func _process(delta):
 		health_label.text = "Health: %d/%d" % [player.health, player.max_health]
 	
 	score_label.text = "Score: %d" % score
+	gold_label.text = "Gold: %d" % gold
 
 func add_score(amount):
 	score += amount
+
+func update_gold(amount):
+	gold = amount

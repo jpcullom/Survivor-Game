@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://assets/sprites/upgrade_background.png" type="Texture" id=1]
+[ext_resource path="res://assets/sprites/button.png" type="Texture" id=2]
+
+[node name="UpgradeMenu" type="Control"]
+rect_min_size = Vector2(400, 300)
+
+[node name="Background" type="TextureRect" parent="."]
+texture = ExtResource( 1 )
+expand = true
+
+[node name="UpgradeOptions" type="VBoxContainer" parent="Background"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10
+margin_top = 10
+margin_right = -10
+margin_bottom = -10
+
+[node name="UpgradeButton1" type="Button" parent="UpgradeOptions"]
+text = "Upgrade Health"
+texture_normal = ExtResource( 2 )
+
+[node name="UpgradeButton2" type="Button" parent="UpgradeOptions"]
+text = "Upgrade Damage"
+texture_normal = ExtResource( 2 )
+
+[node name="UpgradeButton3" type="Button" parent="UpgradeOptions"]
+text = "Upgrade Speed"
+texture_normal = ExtResource( 2 )
+
+[node name="CloseButton" type="Button" parent="UpgradeMenu"]
+text = "Close"
+anchor_bottom = 1.0
+margin_bottom = 10
+margin_left = 10
+margin_right = 10

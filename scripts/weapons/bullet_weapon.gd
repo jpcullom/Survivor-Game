@@ -1,6 +1,4 @@
-extends "res://scripts/weapon_base.gd"
-
-class_name BulletWeapon
+extends "res://scripts/weapons/weapon_base.gd"
 
 var bullet_scene = preload("res://scenes/weapons/bullet.tscn")
 var max_bullets = 6

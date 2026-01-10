@@ -27,8 +27,8 @@ var weapon_index = 0  # 0 = pulse, 1 = bullet
 
 # Load weapon scripts at runtime (adjust paths if your weapon scripts are in a different folder)
 # Use load() instead of preload() so missing files don't error out at script parse time.
-var PulseWeapon = load("res://scripts/pulse_weapon.gd")
-var BulletWeapon = load("res://scripts/bullet_weapon.gd")
+var PulseWeapon = load("res://scripts/weapons/pulse_weapon.gd")
+var BulletWeapon = load("res://scripts/weapons/bullet_weapon.gd")
 func _ready():
 	print("Player initialized at position: ", position)
 	set_physics_process(true)
@@ -39,14 +39,14 @@ func _ready():
 		pulse_weapon.player = self
 		add_child(pulse_weapon)
 	else:
-		print("ERROR: Could not load PulseWeapon script at 'res://scripts/pulse_weapon.gd' - pulse_weapon will be unavailable")
+		print("ERROR: Could not load PulseWeapon script at 'res://scripts/weapons/pulse_weapon.gd' - pulse_weapon will be unavailable")
 	
 	if BulletWeapon:
 		bullet_weapon = BulletWeapon.new()
 		bullet_weapon.player = self
 		add_child(bullet_weapon)
 	else:
-		print("ERROR: Could not load BulletWeapon script at 'res://scripts/bullet_weapon.gd' - bullet_weapon will be unavailable")
+		print("ERROR: Could not load BulletWeapon script at 'res://scripts/weapons/bullet_weapon.gd' - bullet_weapon will be unavailable")
 	
 	# Start with pulse weapon if available, otherwise fall back to bullet or none
 	if pulse_weapon:

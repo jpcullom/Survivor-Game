@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://attack_pulse"]
 
-[ext_resource type="Script" path="res://scripts/attack_pulse.gd" id="1_pulse_script"]
+[ext_resource type="Script" path="res://scripts/weapons/attack_pulse.gd" id="1_pulse_script"]
 
 [node name="AttackPulse" type="Node2D"]
 script = ExtResource("1_pulse_script")

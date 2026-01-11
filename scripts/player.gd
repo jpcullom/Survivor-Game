@@ -29,9 +29,20 @@ var weapon_index = 0  # 0 = pulse, 1 = bullet
 # Use load() instead of preload() so missing files don't error out at script parse time.
 var PulseWeapon = load("res://scripts/weapons/pulse_weapon.gd")
 var BulletWeapon = load("res://scripts/weapons/bullet_weapon.gd")
+
+# Sprite references
+@onready var sprite = $Sprite2D
+var frog_right_texture = null
+var frog_left_texture = null
+var last_horizontal_direction = 1  # 1 = right, -1 = left
+
 func _ready():
 	print("Player initialized at position: ", position)
 	set_physics_process(true)
+	
+	# Load frog textures
+	frog_right_texture = load("res://sprites/FrogRight.png")
+	frog_left_texture = load("res://sprites/FrogLeft.png")
 	
 	# Initialize weapons (guard against missing scripts)
 	if PulseWeapon:
@@ -63,7 +74,7 @@ func _ready():
 	print("Pulse weapon equipped")
 
 # Movement logic
-func _physics_process(delta):
+func _physics_process(_delta):
 	# Get movement input
 	var input_vector = Vector2.ZERO
 	input_vector.x = Input.get_axis("ui_left", "ui_right")
@@ -75,6 +86,17 @@ func _physics_process(delta):
 	
 	velocity = input_vector * speed
 	move_and_slide()
+	
+	# Update sprite direction based on movement
+	if input_vector.x != 0:
+		last_horizontal_direction = sign(input_vector.x)
+	
+	# Change sprite based on direction
+	if sprite and frog_right_texture and frog_left_texture:
+		if last_horizontal_direction > 0:
+			sprite.texture = frog_right_texture
+		else:
+			sprite.texture = frog_left_texture
 	
 	# Check for collisions with enemies (but not during dodge roll)
 	if not is_dodging:

@@ -15,6 +15,12 @@ var score_value: int = 100
 var player = null
 var health_bar = null
 
+# Sprite references
+@onready var sprite = $Sprite2D
+var coyote_right_texture = null
+var coyote_left_texture = null
+var last_horizontal_direction = 1  # 1 = right, -1 = left
+
 # Preload health bar scene and gold pickup
 var health_bar_scene = preload("res://scenes/ui/health_bar.tscn")
 var gold_pickup_scene = preload("res://scenes/items/gold_pickup.tscn")
@@ -22,6 +28,10 @@ var gold_pickup_scene = preload("res://scenes/items/gold_pickup.tscn")
 func _ready():
 	# Add to enemies group for easy player detection
 	add_to_group("enemies")
+	
+	# Load coyote textures
+	coyote_right_texture = load("res://sprites/CoyoteRight.png")
+	coyote_left_texture = load("res://sprites/CoyoteLeft.png")
 	
 	# Create and add health bar
 	health_bar = health_bar_scene.instantiate()
@@ -35,7 +45,7 @@ func _ready():
 	if not player:
 		print("Warning: Enemy couldn't find player!")
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if not player:
 		# Try to find player again
 		player = get_tree().get_first_node_in_group("player")
@@ -44,12 +54,49 @@ func _physics_process(delta: float) -> void:
 	# Move towards player
 	var direction = (player.global_position - global_position).normalized()
 	velocity = direction * speed
+	
+	# Apply separation force from other enemies to prevent stacking
+	var separation = get_separation_force()
+	velocity += separation
+	
 	move_and_slide()
+	
+	# Update sprite direction based on movement
+	if direction.x != 0:
+		last_horizontal_direction = sign(direction.x)
+	
+	# Change sprite based on direction
+	if sprite and coyote_right_texture and coyote_left_texture:
+		if last_horizontal_direction > 0:
+			sprite.texture = coyote_right_texture
+		else:
+			sprite.texture = coyote_left_texture
 	
 	# Check if we're close enough to attack
 	var distance = global_position.distance_to(player.global_position)
 	if distance <= attack_range:
 		attempt_attack()
+
+func get_separation_force() -> Vector2:
+	# Push away from nearby enemies to prevent overlap
+	var separation_force = Vector2.ZERO
+	var separation_radius = 40.0  # How close before pushing away
+	var separation_strength = 50.0  # How strong the push is
+	
+	# Check all enemies in the scene
+	var enemies = get_tree().get_nodes_in_group("enemies")
+	for enemy in enemies:
+		if enemy == self or not is_instance_valid(enemy):
+			continue
+		
+		var distance = global_position.distance_to(enemy.global_position)
+		if distance < separation_radius and distance > 0:
+			# Push away from this enemy
+			var push_direction = (global_position - enemy.global_position).normalized()
+			var push_strength = (separation_radius - distance) / separation_radius
+			separation_force += push_direction * separation_strength * push_strength
+	
+	return separation_force
 
 func attempt_attack() -> void:
 	var current_time = Time.get_ticks_msec() / 1000.0

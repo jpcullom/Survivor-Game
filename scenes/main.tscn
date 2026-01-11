@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://main_scene"]
+[gd_scene load_steps=10 format=3 uid="uid://main_scene"]
 
 [ext_resource type="PackedScene" uid="uid://player" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" uid="uid://enemy_spawner" path="res://scenes/enemies/enemy_spawner.tscn" id="2_spawner"]
@@ -6,25 +6,20 @@
 [ext_resource type="PackedScene" uid="uid://game_over" path="res://scenes/ui/game_over.tscn" id="4_game_over"]
 [ext_resource type="PackedScene" uid="uid://upgrade_menu" path="res://scenes/ui/upgrade_menu.tscn" id="5_upgrade"]
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="6_manager"]
-[ext_resource type="Script" path="res://scripts/grid_background.gd" id="7_grid"]
-[ext_resource type="Script" path="res://scripts/main.gd" id="8_main"]
+[ext_resource type="TileSet" path="res://scenes/desert_tileset.tres" id="7_tileset"]
+[ext_resource type="Script" path="res://scripts/tilemap_generator.gd" id="8_tilemap_script"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="9_main"]
 
 [node name="Main" type="Node2D"]
-script = ExtResource("8_main")
+script = ExtResource("9_main")
 
-[node name="Background" type="CanvasLayer" parent="."]
-layer = -1
-
-[node name="GridBackground" type="ColorRect" parent="Background"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = 1280.0
-offset_bottom = 720.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.15, 0.15, 0.15, 1)
-script = ExtResource("7_grid")
+[node name="DesertTileMap" type="TileMap" parent="."]
+z_index = -1
+tile_set = ExtResource("7_tileset")
+format = 2
+layer_0/name = "Ground"
+layer_0/z_index = -1
+script = ExtResource("8_tilemap_script")
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("6_manager")

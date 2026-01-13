@@ -4,6 +4,12 @@ class_name Enemy
 
 signal enemy_died(score_value)
 
+# Enemy type enum
+enum EnemyType { COYOTE, TOAD, VULTURE }
+
+# Enemy configuration
+var enemy_type: EnemyType = EnemyType.COYOTE
+
 var health: int = 50
 var max_health: int = 50
 var speed: float = 80.0
@@ -17,8 +23,8 @@ var health_bar = null
 
 # Sprite references
 @onready var sprite = $Sprite2D
-var coyote_right_texture = null
-var coyote_left_texture = null
+var right_texture = null
+var left_texture = null
 var last_horizontal_direction = 1  # 1 = right, -1 = left
 var sprite_flip_cooldown: float = 0.0
 var min_flip_interval: float = 0.2  # Minimum time between sprite flips
@@ -45,10 +51,7 @@ func _ready():
 	# Add to enemies group for easy player detection
 	add_to_group("enemies")
 	
-	# Load coyote textures
-	coyote_right_texture = load("res://sprites/CoyoteRight.png")
-	coyote_left_texture = load("res://sprites/CoyoteLeft.png")
-	
+	# Note: initialize_enemy_type() is called by spawner after setting enemy_type
 	# Create and add health bar
 	health_bar = health_bar_scene.instantiate()
 	add_child(health_bar)
@@ -63,6 +66,46 @@ func _ready():
 	
 	if not player:
 		print("Warning: Enemy couldn't find player!")
+
+# Initialize enemy stats based on type
+func initialize_enemy_type() -> void:
+	match enemy_type:
+		EnemyType.COYOTE:
+			# Coyote - Default balanced enemy
+			health = 50
+			max_health = 50
+			speed = 80.0
+			damage = 10
+			attack_range = 50.0
+			attack_cooldown = 1.0
+			score_value = 100
+			right_texture = load("res://sprites/CoyoteRight.png")
+			left_texture = load("res://sprites/CoyoteLeft.png")
+			
+		EnemyType.TOAD:
+			# Toad - Tanky, high damage, rare enemy
+			health = 200
+			max_health = 200
+			speed = 60.0  # Slower than Coyote
+			damage = 25  # Much more damage
+			attack_range = 50.0
+			attack_cooldown = 1.2
+			score_value = 500  # Worth more points
+			right_texture = load("res://sprites/ToadRight.png")
+			left_texture = load("res://sprites/ToadLeft.png")
+			scale = Vector2(2.5, 2.5)  # Make Toad much bigger
+			
+		EnemyType.VULTURE:
+			# Vulture - Fast, dangerous, rare enemy
+			health = 80
+			max_health = 80
+			speed = 120.0  # Much faster than Coyote
+			damage = 15
+			attack_range = 50.0
+			attack_cooldown = 1.0
+			score_value = 200  # Worth more than Coyote
+			right_texture = load("res://sprites/VultureRight.png")
+			left_texture = load("res://sprites/VultureLeft.png")
 
 func _physics_process(_delta: float) -> void:
 	if not player:
@@ -138,11 +181,11 @@ func _physics_process(_delta: float) -> void:
 			sprite_flip_cooldown = min_flip_interval
 	
 	# Change sprite based on direction
-	if sprite and coyote_right_texture and coyote_left_texture:
+	if sprite and right_texture and left_texture:
 		if last_horizontal_direction > 0:
-			sprite.texture = coyote_right_texture
+			sprite.texture = right_texture
 		else:
-			sprite.texture = coyote_left_texture
+			sprite.texture = left_texture
 	
 	# Check if we're close enough to attack (recalculate distance after movement)
 	var final_distance = global_position.distance_to(player.global_position)

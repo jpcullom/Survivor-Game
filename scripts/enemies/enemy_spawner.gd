@@ -20,9 +20,10 @@ var min_group_size: int = 5
 var max_group_size: int = 20
 var spawn_distance: float = 400.0  # Distance from camera edge to spawn
 
-# Debug tracking
-var debug_timer: float = 0.0
-var debug_interval: float = 3.0  # Print stats every 3 seconds
+# Enemy type tracking
+var coyotes_spawned: int = 0
+var toads_spawned: int = 0
+var vultures_spawned: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -38,16 +39,6 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	# Debug logging
-	debug_timer += delta
-	if debug_timer >= debug_interval:
-		var score = hud.score if hud else 0
-		print("[Spawner Debug] Current enemies: ", current_enemies, "/", max_enemies,
-		      " | Spawn interval: ", "%.2f" % spawn_interval, "s",
-		      " | Score: ", score,
-		      " | FPS: ", Engine.get_frames_per_second())
-		debug_timer = 0.0
-	
 	# Update difficulty based on current score
 	update_difficulty()
 	
@@ -142,6 +133,25 @@ func get_offscreen_position() -> Vector2:
 # Spawn a single enemy at a position with slight clustering
 func spawn_enemy_at_position(center: Vector2, _index: int, _total: int) -> void:
 	var enemy_instance = enemy_scene.instantiate()
+	
+	# Determine enemy type BEFORE adding to scene (so _ready() can use it)
+	var rand_type = randi() % 20  # 0-19
+	if rand_type == 0:  # 1 in 20 chance (5%)
+		enemy_instance.enemy_type = Enemy.EnemyType.TOAD
+		toads_spawned += 1
+		print("[Enemy Spawn] TOAD spawned! (Total: Coyotes=", coyotes_spawned, ", Toads=", toads_spawned, ", Vultures=", vultures_spawned, ")")
+	elif rand_type == 1:  # 1 in 20 chance (5%)
+		enemy_instance.enemy_type = Enemy.EnemyType.VULTURE
+		vultures_spawned += 1
+		print("[Enemy Spawn] VULTURE spawned! (Total: Coyotes=", coyotes_spawned, ", Toads=", toads_spawned, ", Vultures=", vultures_spawned, ")")
+	else:
+		enemy_instance.enemy_type = Enemy.EnemyType.COYOTE
+		coyotes_spawned += 1
+	
+	# Initialize enemy with its type
+	enemy_instance.initialize_enemy_type()
+	
+	# NOW add to scene tree (after type is set and initialized)
 	get_parent().add_child(enemy_instance)
 	
 	# Add some random spread around the center point (tighter clustering)

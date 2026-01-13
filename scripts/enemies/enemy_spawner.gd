@@ -4,9 +4,12 @@ extends Node
 
 # Variables
 var enemy_scene: PackedScene
-var spawn_interval: float = 3.0  # Time between group spawns
+var base_spawn_interval: float = 3.0  # Base time between group spawns
+var spawn_interval: float = 3.0  # Current spawn interval (will scale with score)
 var spawn_timer: float = 0.0
-var max_enemies: int = 50  # Increased to allow for groups
+var base_max_enemies: int = 50  # Base max enemies
+var max_enemies: int = 50  # Current max enemies (will scale with score)
+var absolute_max_enemies: int = 150  # Hard cap to prevent performance issues
 var current_enemies: int = 0
 var hud = null
 var camera: Camera2D = null
@@ -16,6 +19,10 @@ var player = null
 var min_group_size: int = 5
 var max_group_size: int = 20
 var spawn_distance: float = 400.0  # Distance from camera edge to spawn
+
+# Debug tracking
+var debug_timer: float = 0.0
+var debug_interval: float = 3.0  # Print stats every 3 seconds
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -31,10 +38,40 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	# Debug logging
+	debug_timer += delta
+	if debug_timer >= debug_interval:
+		var score = hud.score if hud else 0
+		print("[Spawner Debug] Current enemies: ", current_enemies, "/", max_enemies,
+		      " | Spawn interval: ", "%.2f" % spawn_interval, "s",
+		      " | Score: ", score,
+		      " | FPS: ", Engine.get_frames_per_second())
+		debug_timer = 0.0
+	
+	# Update difficulty based on current score
+	update_difficulty()
+	
 	spawn_timer += delta
 	if spawn_timer >= spawn_interval and current_enemies < max_enemies:
 		spawn_enemy_group()
 		spawn_timer = 0.0
+
+# Update spawn rate and max enemies based on score
+func update_difficulty() -> void:
+	if not hud:
+		return
+	
+	var score = hud.score
+	
+	# Decrease spawn interval as score increases (faster spawns)
+	# Every 100 score reduces interval by 0.1 seconds, min 0.5 seconds
+	var interval_reduction = (score / 100.0) * 0.1
+	spawn_interval = max(0.5, base_spawn_interval - interval_reduction)
+	
+	# Increase max enemies as score increases
+	# Every 50 score adds 5 more max enemies
+	var enemy_increase = int(score / 50.0) * 5
+	max_enemies = min(absolute_max_enemies, base_max_enemies + enemy_increase)
 
 # Function to spawn a group of enemies
 func spawn_enemy_group() -> void:

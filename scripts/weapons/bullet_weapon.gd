@@ -7,10 +7,23 @@ var reload_time = 2.0
 var is_reloading = false
 var fire_delay = 0.1  # Time between each bullet
 
+# Auto-attack timer
+var auto_attack_timer: float = 0.0
+
 func _init():
 	damage = 10
 	cooldown = 0.1  # Quick fire rate
 	attack_range = 500.0  # Bullets can go far
+
+func _process(delta: float) -> void:
+	if not player:
+		return
+	
+	# Auto-attack timer
+	auto_attack_timer += delta
+	if auto_attack_timer >= cooldown and can_attack():
+		attack()
+		auto_attack_timer = 0.0
 
 func attack():
 	if not player or is_reloading:

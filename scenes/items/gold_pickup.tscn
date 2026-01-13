@@ -13,11 +13,11 @@ script = ExtResource("1_gold_script")
 [node name="Visual" type="Node2D" parent="."]
 
 [node name="OuterCircle" type="Polygon2D" parent="Visual"]
-color = Color(1, 0.843, 0, 1)
+color = Color(0, 0.5, 1, 1)
 polygon = PackedVector2Array(0, -10, 2.94, -9.51, 5.88, -8.09, 7.07, -7.07, 8.09, -5.88, 9.51, -2.94, 10, 0, 9.51, 2.94, 8.09, 5.88, 7.07, 7.07, 5.88, 8.09, 2.94, 9.51, 0, 10, -2.94, 9.51, -5.88, 8.09, -7.07, 7.07, -8.09, 5.88, -9.51, 2.94, -10, 0)
 
 [node name="InnerCircle" type="Polygon2D" parent="Visual"]
-color = Color(1, 1, 0.6, 1)
+color = Color(0.6, 0.8, 1, 1)
 polygon = PackedVector2Array(0, -6, 1.76, -5.71, 3.53, -4.85, 4.24, -4.24, 4.85, -3.53, 5.71, -1.76, 6, 0, 5.71, 1.76, 4.85, 3.53, 4.24, 4.24, 3.53, 4.85, 1.76, 5.71, 0, 6, -1.76, 5.71, -3.53, 4.85, -4.24, 4.24, -4.85, 3.53, -5.71, 1.76, -6, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://upgrade_menu"]
+[gd_scene load_steps=2 format=3 uid="uid://pstjhauhs7m8"]
 
 [ext_resource type="Script" path="res://scripts/ui/upgrade_menu.gd" id="1_upgrade_script"]
 
@@ -27,108 +27,711 @@ layout_mode = 2
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
+theme_override_font_sizes/font_size = 36
 text = "UPGRADE AVAILABLE!"
 horizontal_alignment = 1
 
 [node name="Spacer1" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
 
 [node name="SubtitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
 text = "You have enough gold to purchase an upgrade!"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-
-[node name="UpgradeList" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="DamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
-custom_minimum_size = Vector2(600, 0)
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer"]
-layout_mode = 2
-
-[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
-text = "Attack Damage Boost"
-
-[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Level: 0"
-horizontal_alignment = 2
-
-[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Increases your attack damage by 50%"
-
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade/VBoxContainer"]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/DamageUpgrade"]
-custom_minimum_size = Vector2(0, 50)
+[node name="UpgradeList" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_constants/separation = 10
+
+[node name="Column1" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="PulseDamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Pulse Weapon Damage"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases pulse weapon damage by 50%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseDamageUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "Purchase (25 Gold)"
 
-[node name="BulletUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
-custom_minimum_size = Vector2(600, 0)
+[node name="PulseAreaUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1"]
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade/VBoxContainer"]
 layout_mode = 2
 
-[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer/HBoxContainer"]
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
-text = "Bullet Capacity"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Pulse Weapon Area"
 
-[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade"]
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases pulse weapon attack range by 30%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
 text = "Level: 0"
 horizontal_alignment = 2
 
-[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer"]
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/PulseAreaUpgrade"]
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="BulletDamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Bullet Weapon Damage"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases bullet weapon damage by 50%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletDamageUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="BulletCapacityUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Bullet Capacity"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
 text = "Increases bullet magazine capacity by 2"
 
-[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade/VBoxContainer"]
-custom_minimum_size = Vector2(0, 10)
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 
-[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/BulletUpgrade"]
-custom_minimum_size = Vector2(0, 50)
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column1/BulletCapacityUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="Column2" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="OrbitalCountUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Orbital Count"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Add one more orbital satellite"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalCountUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="OrbitalDamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Orbital Damage"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases orbital damage by 50%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/OrbitalDamageUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="BoomerangCountUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Boomerang Count"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Throw one more boomerang per attack"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangCountUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="BoomerangDamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2"]
+clip_contents = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Boomerang Damage"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases boomerang damage by 50%"
+vertical_alignment = 2
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column2/BoomerangDamageUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="Column3" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="LightningChainsUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Lightning Chains"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Lightning chains to one more enemy"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningChainsUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="LightningDamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Lightning Damage"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases lightning damage by 50%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/LightningDamageUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="GrenadeCountUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Grenade Count"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Throw one more grenade per attack"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeCountUpgrade"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Purchase (25 Gold)"
+
+[node name="GrenadeDamageUpgrade" type="PanelContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade/VBoxContainer"]
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Grenade Damage"
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases grenade damage by 50%"
+
+[node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade/VBoxContainer"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Level: 0"
+horizontal_alignment = 2
+
+[node name="PurchaseButton" type="Button" parent="CenterContainer/VBoxContainer/UpgradeList/Column3/GrenadeDamageUpgrade"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "Purchase (25 Gold)"
 
 [node name="Spacer3" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="InstructionLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
+text = "Use Arrow Keys to navigate, ENTER to select"
+horizontal_alignment = 1
+
+[node name="Spacer4" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="CloseButton" type="Button" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(200, 50)
+custom_minimum_size = Vector2(150, 40)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 16
 text = "Close"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalCountUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalCountUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Orbital Count"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalCountUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Add one more orbital satellite"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalCountUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalDamageUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalDamageUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Orbital Damage"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalDamageUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases orbital damage by 50%"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_OrbitalDamageUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangCountUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangCountUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Boomerang Count"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangCountUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Throw one more boomerang per attack"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangCountUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangDamageUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangDamageUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Boomerang Damage"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangDamageUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases boomerang damage by 50%"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_BoomerangDamageUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningChainsUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningChainsUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Lightning Chains"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningChainsUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Lightning chains to one more enemy"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningChainsUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningDamageUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningDamageUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Lightning Damage"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningDamageUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases lightning damage by 50%"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_LightningDamageUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeCountUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeCountUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Grenade Count"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeCountUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Throw one more grenade per attack"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeCountUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeDamageUpgrade_VBoxContainer#HBoxContainer" type="HBoxContainer" parent="."]
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeDamageUpgrade_VBoxContainer_HBoxContainer#NameLabel" type="Label" parent="."]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Grenade Damage"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeDamageUpgrade_VBoxContainer#DescriptionLabel" type="Label" parent="."]
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 14
+text = "Increases grenade damage by 50%"
+
+[node name="CenterContainer_VBoxContainer_UpgradeList_GrenadeDamageUpgrade_VBoxContainer#Spacer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 3
+anchors_preset = 0

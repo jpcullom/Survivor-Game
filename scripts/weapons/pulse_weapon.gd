@@ -9,6 +9,9 @@ var attack_range: float = 100.0
 var player = null
 var _can_attack: bool = true
 
+# Auto-attack timer
+var auto_attack_timer: float = 0.0
+
 func can_attack() -> bool:
 	return _can_attack
 
@@ -23,6 +26,16 @@ var attack_pulse_scene = preload("res://scenes/weapons/attack_pulse.tscn")
 func _init():
 	# Keep defaults in case WeaponBase normally sets them
 	pass
+
+func _process(delta: float) -> void:
+	if not player:
+		return
+	
+	# Auto-attack timer
+	auto_attack_timer += delta
+	if auto_attack_timer >= cooldown and can_attack():
+		attack()
+		auto_attack_timer = 0.0
 
 func attack():
 	if not can_attack() or not player:

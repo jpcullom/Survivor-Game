@@ -6,6 +6,7 @@ var base_speed = 200
 var health = 100
 var max_health = 100
 var gold = 0
+var last_upgrade_threshold = 0  # Track which threshold we last showed the menu at
 var attack_damage = 10
 var attack_range = 100
 var is_attacking = false
@@ -22,6 +23,10 @@ var can_dodge = true
 # Weapon system
 var pulse_weapon = null
 var bullet_weapon = null
+var orbital_weapon = null
+var boomerang_weapon = null
+var lightning_weapon = null
+var grenade_weapon = null
 var current_weapon = null
 var weapon_index = 0  # 0 = pulse, 1 = bullet
 
@@ -29,6 +34,10 @@ var weapon_index = 0  # 0 = pulse, 1 = bullet
 # Use load() instead of preload() so missing files don't error out at script parse time.
 var PulseWeapon = load("res://scripts/weapons/pulse_weapon.gd")
 var BulletWeapon = load("res://scripts/weapons/bullet_weapon.gd")
+var OrbitalWeapon = load("res://scripts/weapons/orbital_weapon.gd")
+var BoomerangWeapon = load("res://scripts/weapons/boomerang_weapon.gd")
+var LightningWeapon = load("res://scripts/weapons/lightning_weapon.gd")
+var GrenadeWeapon = load("res://scripts/weapons/grenade_weapon.gd")
 
 # Sprite references
 @onready var sprite = $Sprite2D
@@ -58,6 +67,40 @@ func _ready():
 		add_child(bullet_weapon)
 	else:
 		print("ERROR: Could not load BulletWeapon script at 'res://scripts/weapons/bullet_weapon.gd' - bullet_weapon will be unavailable")
+	
+	if OrbitalWeapon:
+		orbital_weapon = OrbitalWeapon.new()
+		orbital_weapon.player = self
+		add_child(orbital_weapon)
+		# Spawn initial orbitals after player is set
+		orbital_weapon.spawn_orbitals()
+		print("Orbital weapon equipped with ", orbital_weapon.orbital_count, " orbitals")
+	else:
+		print("ERROR: Could not load OrbitalWeapon script - orbital_weapon will be unavailable")
+	
+	if BoomerangWeapon:
+		boomerang_weapon = BoomerangWeapon.new()
+		boomerang_weapon.player = self
+		add_child(boomerang_weapon)
+		print("Boomerang weapon equipped")
+	else:
+		print("ERROR: Could not load BoomerangWeapon script - boomerang_weapon will be unavailable")
+	
+	if LightningWeapon:
+		lightning_weapon = LightningWeapon.new()
+		lightning_weapon.player = self
+		add_child(lightning_weapon)
+		print("Lightning weapon equipped")
+	else:
+		print("ERROR: Could not load LightningWeapon script - lightning_weapon will be unavailable")
+	
+	if GrenadeWeapon:
+		grenade_weapon = GrenadeWeapon.new()
+		grenade_weapon.player = self
+		add_child(grenade_weapon)
+		print("Grenade weapon equipped")
+	else:
+		print("ERROR: Could not load GrenadeWeapon script - grenade_weapon will be unavailable")
 	
 	# Start with pulse weapon if available, otherwise fall back to bullet or none
 	if pulse_weapon:
@@ -224,17 +267,14 @@ func add_gold(amount):
 	if hud and hud.has_method("update_gold"):
 		hud.update_gold(gold)
 	
-	# Check if player has enough gold for upgrade (25 gold)
-	if gold >= 25:
-		print("Player has 25+ gold! Trying to show upgrade menu...")
-		var upgrade_menu = get_tree().get_first_node_in_group("upgrade_menu")
-		print("  upgrade_menu found: ", upgrade_menu)
-		if upgrade_menu:
-			print("  Has show_upgrade_menu method: ", upgrade_menu.has_method("show_upgrade_menu"))
-			if upgrade_menu.has_method("show_upgrade_menu"):
-				print("  Calling show_upgrade_menu()!")
-				upgrade_menu.show_upgrade_menu()
-			else:
-				print("  ERROR: upgrade_menu doesn't have show_upgrade_menu method!")
-		else:
-			print("  ERROR: Could not find upgrade menu in 'upgrade_menu' group")
+	# Check if player has reached the next upgrade threshold
+	var upgrade_menu = get_tree().get_first_node_in_group("upgrade_menu")
+	if upgrade_menu and upgrade_menu.has_method("calculate_next_threshold"):
+		var next_threshold = upgrade_menu.calculate_next_threshold()
+		print("  Current gold: ", gold, ", Next threshold: ", next_threshold, ", Last threshold: ", last_upgrade_threshold)
+		
+		# Only show menu if we've reached a new threshold
+		if gold >= next_threshold and next_threshold > last_upgrade_threshold:
+			print("  Reached new upgrade threshold! Showing menu...")
+			last_upgrade_threshold = next_threshold
+			upgrade_menu.show_upgrade_menu()

@@ -30,6 +30,16 @@ var grenade_weapon = null
 var current_weapon = null
 var weapon_index = 0  # 0 = pulse, 1 = bullet
 
+# Weapon unlock tracking
+var unlocked_weapons = {
+	"bullet": true,     # Start with bullet
+	"pulse": false,
+	"orbital": false,
+	"boomerang": false,
+	"lightning": false,
+	"grenade": false
+}
+
 # Load weapon scripts at runtime (adjust paths if your weapon scripts are in a different folder)
 # Use load() instead of preload() so missing files don't error out at script parse time.
 var PulseWeapon = load("res://scripts/weapons/pulse_weapon.gd")
@@ -53,68 +63,13 @@ func _ready():
 	frog_right_texture = load("res://sprites/FrogRight.png")
 	frog_left_texture = load("res://sprites/FrogLeft.png")
 	
-	# Initialize weapons (guard against missing scripts)
-	if PulseWeapon:
-		pulse_weapon = PulseWeapon.new()
-		pulse_weapon.player = self
-		add_child(pulse_weapon)
-	else:
-		print("ERROR: Could not load PulseWeapon script at 'res://scripts/weapons/pulse_weapon.gd' - pulse_weapon will be unavailable")
-	
-	if BulletWeapon:
+	# Initialize only unlocked weapons - start with just bullet
+	if BulletWeapon and unlocked_weapons["bullet"]:
 		bullet_weapon = BulletWeapon.new()
 		bullet_weapon.player = self
 		add_child(bullet_weapon)
-	else:
-		print("ERROR: Could not load BulletWeapon script at 'res://scripts/weapons/bullet_weapon.gd' - bullet_weapon will be unavailable")
-	
-	if OrbitalWeapon:
-		orbital_weapon = OrbitalWeapon.new()
-		orbital_weapon.player = self
-		add_child(orbital_weapon)
-		# Spawn initial orbitals after player is set
-		orbital_weapon.spawn_orbitals()
-		print("Orbital weapon equipped with ", orbital_weapon.orbital_count, " orbitals")
-	else:
-		print("ERROR: Could not load OrbitalWeapon script - orbital_weapon will be unavailable")
-	
-	if BoomerangWeapon:
-		boomerang_weapon = BoomerangWeapon.new()
-		boomerang_weapon.player = self
-		add_child(boomerang_weapon)
-		print("Boomerang weapon equipped")
-	else:
-		print("ERROR: Could not load BoomerangWeapon script - boomerang_weapon will be unavailable")
-	
-	if LightningWeapon:
-		lightning_weapon = LightningWeapon.new()
-		lightning_weapon.player = self
-		add_child(lightning_weapon)
-		print("Lightning weapon equipped")
-	else:
-		print("ERROR: Could not load LightningWeapon script - lightning_weapon will be unavailable")
-	
-	if GrenadeWeapon:
-		grenade_weapon = GrenadeWeapon.new()
-		grenade_weapon.player = self
-		add_child(grenade_weapon)
-		print("Grenade weapon equipped")
-	else:
-		print("ERROR: Could not load GrenadeWeapon script - grenade_weapon will be unavailable")
-	
-	# Start with pulse weapon if available, otherwise fall back to bullet or none
-	if pulse_weapon:
-		current_weapon = pulse_weapon
-		weapon_index = 0
-		print("Pulse weapon equipped")
-	elif bullet_weapon:
 		current_weapon = bullet_weapon
-		weapon_index = 1
-		print("Bullet weapon equipped (pulse missing)")
-	else:
-		current_weapon = null
-		print("No weapons available")
-	print("Pulse weapon equipped")
+		print("Starting with Bullet weapon")
 
 # Movement logic
 func _physics_process(_delta):
@@ -278,3 +233,45 @@ func add_gold(amount):
 			print("  Reached new upgrade threshold! Showing menu...")
 			last_upgrade_threshold = next_threshold
 			upgrade_menu.show_upgrade_menu()
+
+# Function to unlock a weapon
+func unlock_weapon(weapon_name: String):
+	if not unlocked_weapons.has(weapon_name) or unlocked_weapons[weapon_name]:
+		return  # Already unlocked or invalid weapon
+	
+	print("[UNLOCK] Unlocking weapon: ", weapon_name)
+	unlocked_weapons[weapon_name] = true
+	
+	# Instantiate the weapon
+	match weapon_name:
+		"pulse":
+			if PulseWeapon and not pulse_weapon:
+				pulse_weapon = PulseWeapon.new()
+				pulse_weapon.player = self
+				add_child(pulse_weapon)
+				print("Pulse weapon equipped!")
+		"orbital":
+			if OrbitalWeapon and not orbital_weapon:
+				orbital_weapon = OrbitalWeapon.new()
+				orbital_weapon.player = self
+				add_child(orbital_weapon)
+				orbital_weapon.spawn_orbitals()
+				print("Orbital weapon equipped with ", orbital_weapon.orbital_count, " orbitals!")
+		"boomerang":
+			if BoomerangWeapon and not boomerang_weapon:
+				boomerang_weapon = BoomerangWeapon.new()
+				boomerang_weapon.player = self
+				add_child(boomerang_weapon)
+				print("Boomerang weapon equipped!")
+		"lightning":
+			if LightningWeapon and not lightning_weapon:
+				lightning_weapon = LightningWeapon.new()
+				lightning_weapon.player = self
+				add_child(lightning_weapon)
+				print("Lightning weapon equipped!")
+		"grenade":
+			if GrenadeWeapon and not grenade_weapon:
+				grenade_weapon = GrenadeWeapon.new()
+				grenade_weapon.player = self
+				add_child(grenade_weapon)
+				print("Grenade weapon equipped!")

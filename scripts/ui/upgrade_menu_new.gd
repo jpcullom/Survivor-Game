@@ -38,12 +38,10 @@ func _ready():
 	visible = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	
-	print("[NEW UPGRADE MENU] Initialized!")
-	
 	# Wait for player
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("player")
-	print("[NEW UPGRADE MENU] Player found: ", player)
+	print("Upgrade menu initialized, player: ", player)
 
 func calculate_upgrade_cost() -> int:
 	return base_cost + (cost_increment * total_upgrades)
@@ -63,17 +61,11 @@ func show_upgrade_menu():
 	get_tree().paused = true
 	selected_option = 0
 	
-	# Update title
-	var title = get_node_or_null("CenterContainer/VBoxContainer/TitleLabel")
-	if title:
-		title.text = "CHOOSE YOUR UPGRADE!"
-	
 	# Generate 3 random upgrade options
 	current_options = generate_upgrade_options()
 	
 	# Display the options
 	display_options()
-	update_selection_highlight()
 
 func hide_upgrade_menu():
 	visible = false
@@ -204,37 +196,11 @@ func get_weapon_description(weapon_name: String) -> String:
 	return "New weapon"
 
 func display_options():
-	# Update the subtitle to show the cost
-	var subtitle = get_node_or_null("CenterContainer/VBoxContainer/SubtitleLabel")
-	if subtitle:
-		var cost = calculate_upgrade_cost()
-		subtitle.text = "Cost: " + str(cost) + " gold | Press 1, 2, or 3, then ENTER to confirm"
-	
-	# Update option panels
-	for i in range(3):
-		var option_panel = get_node_or_null("CenterContainer/VBoxContainer/Option" + str(i + 1))
-		if not option_panel:
-			continue
-		
-		if i < current_options.size():
-			var opt = current_options[i]
-			var name_label = option_panel.get_node_or_null("VBox/NameLabel")
-			var desc_label = option_panel.get_node_or_null("VBox/DescLabel")
-			
-			if name_label:
-				name_label.text = "[" + str(i + 1) + "] " + opt["name"]
-			if desc_label:
-				desc_label.text = opt["description"]
-			
-			option_panel.visible = true
-		else:
-			option_panel.visible = false
-	
-	# Print to console as well
+	# For now, print to console (UI will need to be updated in the scene)
 	print("[UPGRADE MENU] Available options:")
 	for i in range(current_options.size()):
 		var opt = current_options[i]
-		print("  [", i + 1, "] ", opt["name"], " - ", opt["description"])
+		print("  [", i, "] ", opt["name"], " - ", opt["description"])
 
 func apply_upgrade(option_index: int):
 	if option_index < 0 or option_index >= current_options.size():
@@ -321,33 +287,20 @@ func _input(event):
 	# Navigate with 1, 2, 3 keys or arrow keys
 	if event.is_action_pressed("ui_up") or (event is InputEventKey and event.pressed and event.keycode == KEY_1):
 		selected_option = 0
-		update_selection_highlight()
-		print("[SELECT] Option 1")
+		print("[SELECT] Option 0")
 		get_viewport().set_input_as_handled()
 	elif (event is InputEventKey and event.pressed and event.keycode == KEY_2):
 		if current_options.size() > 1:
 			selected_option = 1
-			update_selection_highlight()
-			print("[SELECT] Option 2")
+			print("[SELECT] Option 1")
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("ui_down") or (event is InputEventKey and event.pressed and event.keycode == KEY_3):
 		if current_options.size() > 2:
 			selected_option = 2
-			update_selection_highlight()
-			print("[SELECT] Option 3")
+			print("[SELECT] Option 2")
 		get_viewport().set_input_as_handled()
 	
 	# Confirm with Enter or Space
 	if event.is_action_pressed("ui_accept") or (event is InputEventKey and event.pressed and event.keycode == KEY_ENTER):
 		apply_upgrade(selected_option)
 		get_viewport().set_input_as_handled()
-
-func update_selection_highlight():
-	# Reset all panels
-	for i in range(3):
-		var panel = get_node_or_null("CenterContainer/VBoxContainer/Option" + str(i + 1))
-		if panel:
-			if i == selected_option:
-				panel.modulate = Color(1.5, 1.5, 0.5)  # Yellow highlight
-			else:
-				panel.modulate = Color(1, 1, 1)  # Normal

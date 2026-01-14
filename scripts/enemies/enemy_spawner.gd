@@ -4,11 +4,11 @@ extends Node
 
 # Variables
 var enemy_scene: PackedScene
-var base_spawn_interval: float = 3.0  # Base time between group spawns
-var spawn_interval: float = 3.0  # Current spawn interval (will scale with score)
+var base_spawn_interval: float = 5.0  # Base time between group spawns (increased from 3.0)
+var spawn_interval: float = 5.0  # Current spawn interval (will scale with score)
 var spawn_timer: float = 0.0
-var base_max_enemies: int = 50  # Base max enemies
-var max_enemies: int = 50  # Current max enemies (will scale with score)
+var base_max_enemies: int = 30  # Base max enemies (reduced from 50)
+var max_enemies: int = 30  # Current max enemies (will scale with score)
 var absolute_max_enemies: int = 150  # Hard cap to prevent performance issues
 var current_enemies: int = 0
 var hud = null
@@ -16,8 +16,8 @@ var camera: Camera2D = null
 var player = null
 
 # Group spawn settings
-var min_group_size: int = 5
-var max_group_size: int = 20
+var min_group_size: int = 3
+var max_group_size: int = 12
 var spawn_distance: float = 400.0  # Distance from camera edge to spawn
 
 # Enemy type tracking
@@ -90,12 +90,12 @@ func spawn_enemy_group() -> void:
 func get_weighted_group_size() -> int:
 	var rand = randf()
 	
-	if rand < 0.5:  # 50% chance: small group (5-8)
-		return randi_range(5, 8)
-	elif rand < 0.8:  # 30% chance: medium group (9-14)
-		return randi_range(9, 14)
-	else:  # 20% chance: large group (15-20)
-		return randi_range(15, 20)
+	if rand < 0.6:  # 60% chance: small group (3-5)
+		return randi_range(3, 5)
+	elif rand < 0.85:  # 25% chance: medium group (6-8)
+		return randi_range(6, 8)
+	else:  # 15% chance: large group (9-12)
+		return randi_range(9, 12)
 
 # Get a position just outside the camera's view
 func get_offscreen_position() -> Vector2:

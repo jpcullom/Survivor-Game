@@ -13,6 +13,10 @@ var is_attacking = false
 var invulnerable = false
 var invulnerability_time = 1.0  # Seconds of invulnerability after taking damage
 
+# Pickup range (affected by magnet)
+var pickup_range = 50.0
+var base_pickup_range = 50.0
+
 # Dodge roll stats
 var is_dodging = false
 var dodge_speed_multiplier = 2.5
@@ -39,6 +43,12 @@ var unlocked_weapons = {
 	"lightning": false,
 	"grenade": false
 }
+
+# Passive items
+var magnet_level = 0
+var speed_boost_level = 0
+var crown_level = 0
+var gold_value_multiplier = 1.0
 
 # Load weapon scripts at runtime (adjust paths if your weapon scripts are in a different folder)
 # Use load() instead of preload() so missing files don't error out at script parse time.
@@ -214,8 +224,16 @@ func die():
 
 # Function to add gold
 func add_gold(amount):
-	gold += amount
-	print("Picked up ", amount, " gold! Total: ", gold)
+	# Apply crown bonus (flat amount based on level)
+	var crown_bonus = 0
+	for i in range(1, crown_level + 1):
+		crown_bonus += i * 5
+	var actual_amount = amount + crown_bonus
+	gold += actual_amount
+	if crown_level > 0:
+		print("Picked up ", amount, " gold (+", crown_bonus, " crown bonus = ", actual_amount, ")! Total: ", gold)
+	else:
+		print("Picked up ", amount, " gold! Total: ", gold)
 	
 	# Update HUD
 	var hud = get_tree().get_first_node_in_group("hud")
@@ -235,6 +253,28 @@ func add_gold(amount):
 			upgrade_menu.show_upgrade_menu()
 
 # Function to unlock a weapon
+func upgrade_magnet():
+	magnet_level += 1
+	# Each level increases pickup range by 30 pixels
+	pickup_range = base_pickup_range + (magnet_level * 30.0)
+	print("[PLAYER] Magnet upgraded to level ", magnet_level, ", pickup range: ", pickup_range)
+
+func upgrade_speed_boost():
+	speed_boost_level += 1
+	# Each level increases speed by 25%
+	speed = base_speed * (1 + speed_boost_level * 0.25)
+	print("[PLAYER] Speed boost upgraded to level ", speed_boost_level, ", speed: ", speed)
+
+func upgrade_crown():
+	crown_level += 1
+	# Each level adds (level * 5) to gold value
+	# Level 1: +5, Level 2: +10, Level 3: +15, etc.
+	var total_bonus = 0
+	for i in range(1, crown_level + 1):
+		total_bonus += i * 5
+	gold_value_multiplier = 1.0 + (total_bonus / 5.0)  # Convert to multiplier for the calculation
+	print("[PLAYER] Crown upgraded to level ", crown_level, ", bonus gold per pickup: +", crown_level * 5)
+
 func unlock_weapon(weapon_name: String):
 	if not unlocked_weapons.has(weapon_name) or unlocked_weapons[weapon_name]:
 		return  # Already unlocked or invalid weapon

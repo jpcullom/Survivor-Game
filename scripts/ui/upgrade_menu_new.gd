@@ -21,7 +21,8 @@ var weapon_levels = {
 	"lightning_chains": 0,
 	"lightning_damage": 0,
 	"grenade_count": 0,
-	"grenade_damage": 0
+	"grenade_damage": 0,
+	"magnet": 0
 }
 
 # Available upgrade options
@@ -73,6 +74,14 @@ func hide_upgrade_menu():
 
 func generate_upgrade_options() -> Array:
 	var options = []
+	
+	# ALWAYS add magnet as first option (for testing)
+	options.append({
+		"type": "upgrade",
+		"upgrade_key": "magnet",
+		"name": "Magnet Level " + str(weapon_levels["magnet"] + 1),
+		"description": "Increases gold pickup range by 30 pixels (Current level: " + str(weapon_levels["magnet"]) + ")"
+	})
 	
 	# Build pool of all possible upgrades
 	var upgrade_pool = []
@@ -172,9 +181,9 @@ func generate_upgrade_options() -> Array:
 			"description": "Increases grenade damage"
 		})
 	
-	# Randomly select 3 options (or less if pool is smaller)
+	# Randomly select 2 more options (since magnet is always first)
 	upgrade_pool.shuffle()
-	var num_options = min(3, upgrade_pool.size())
+	var num_options = min(2, upgrade_pool.size())
 	for i in range(num_options):
 		options.append(upgrade_pool[i])
 	
@@ -186,7 +195,7 @@ func get_weapon_description(weapon_name: String) -> String:
 		"pulse":
 			return "AoE damage around player"
 		"orbital":
-			return "Rotating satellites that damage on contact"
+			return "Rotating satellites that options.size()ontact"
 		"boomerang":
 			return "Throws boomerangs that return"
 		"lightning":
@@ -279,6 +288,9 @@ func apply_weapon_upgrade(upgrade_key: String):
 		"grenade_damage":
 			if player.grenade_weapon:
 				player.grenade_weapon.upgrade_damage()
+		"magnet":
+			player.upgrade_magnet()
+			print("Magnet level: ", player.magnet_level)
 
 func _input(event):
 	if not visible:

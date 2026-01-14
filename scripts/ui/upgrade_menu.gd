@@ -21,7 +21,10 @@ var weapon_levels = {
 	"lightning_chains": 0,
 	"lightning_damage": 0,
 	"grenade_count": 0,
-	"grenade_damage": 0
+	"grenade_damage": 0,
+	"magnet": 0,
+	"speed_boost": 0,
+	"crown": 0
 }
 
 # Available upgrade options
@@ -80,10 +83,33 @@ func hide_upgrade_menu():
 	get_tree().paused = false
 
 func generate_upgrade_options() -> Array:
-	var options = []
+	print("[UPGRADE MENU] generate_upgrade_options called")
 	
 	# Build pool of all possible upgrades
 	var upgrade_pool = []
+	
+	# Add passive upgrades to pool
+	upgrade_pool.append({
+		"type": "upgrade",
+		"upgrade_key": "magnet",
+		"name": "Magnet Level " + str(weapon_levels["magnet"] + 1),
+		"description": "Increases gold pickup range by 30 pixels (Current level: " + str(weapon_levels["magnet"]) + ")"
+	})
+	
+	upgrade_pool.append({
+		"type": "upgrade",
+		"upgrade_key": "speed_boost",
+		"name": "Speed Boost Level " + str(weapon_levels["speed_boost"] + 1),
+		"description": "Increases movement speed by 25% (Current level: " + str(weapon_levels["speed_boost"]) + ")"
+	})
+	
+	var next_crown_bonus = (weapon_levels["crown"] + 1) * 5
+	upgrade_pool.append({
+		"type": "upgrade",
+		"upgrade_key": "crown",
+		"name": "Crown Level " + str(weapon_levels["crown"] + 1),
+		"description": "Add +" + str(next_crown_bonus) + " to each gold pickup (Current level: " + str(weapon_levels["crown"]) + ")"
+	})
 	
 	# Add weapon unlocks for locked weapons
 	for weapon_name in player.unlocked_weapons:
@@ -180,13 +206,19 @@ func generate_upgrade_options() -> Array:
 			"description": "Increases grenade damage"
 		})
 	
-	# Randomly select 3 options (or less if pool is smaller)
+	# Shuffle and pick 3 random options
 	upgrade_pool.shuffle()
-	var num_options = min(3, upgrade_pool.size())
-	for i in range(num_options):
+	var options = []
+	for i in range(min(3, upgrade_pool.size())):
 		options.append(upgrade_pool[i])
 	
-	print("[UPGRADE MENU] Generated ", num_options, " options")
+	print("[UPGRADE MENU] Total options generated: ", options.size())
+	print("[UPGRADE MENU] Option 1: ", options[0]["name"])
+	if options.size() > 1:
+		print("[UPGRADE MENU] Option 2: ", options[1]["name"])
+	if options.size() > 2:
+		print("[UPGRADE MENU] Option 3: ", options[2]["name"])
+	
 	return options
 
 func get_weapon_description(weapon_name: String) -> String:
@@ -313,6 +345,16 @@ func apply_weapon_upgrade(upgrade_key: String):
 		"grenade_damage":
 			if player.grenade_weapon:
 				player.grenade_weapon.upgrade_damage()
+		"magnet":
+			player.upgrade_magnet()
+			print("[UPGRADE] Magnet level: ", player.magnet_level, ", pickup range: ", player.pickup_range)
+		"speed_boost":
+			player.upgrade_speed_boost()
+			print("[UPGRADE] Speed boost level: ", player.speed_boost_level, ", speed: ", player.speed)
+		"crown":
+			player.upgrade_crown()
+			var current_bonus = player.crown_level * 5
+			print("[UPGRADE] Crown level: ", player.crown_level, ", bonus per pickup: +", current_bonus)
 
 func _input(event):
 	if not visible:

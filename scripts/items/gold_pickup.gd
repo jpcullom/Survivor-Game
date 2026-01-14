@@ -2,7 +2,6 @@ extends Area2D
 
 var gold_value = 5
 var move_speed = 150.0
-var attraction_range = 50.0
 var player = null
 
 func _ready():
@@ -22,6 +21,9 @@ func _physics_process(delta):
 		return
 	
 	var distance_to_player = global_position.distance_to(player.global_position)
+	
+	# Use player's pickup range (affected by magnet upgrades)
+	var attraction_range = player.pickup_range if "pickup_range" in player else 50.0
 	
 	# Move towards player if within attraction range
 	if distance_to_player < attraction_range:

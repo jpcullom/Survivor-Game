@@ -1,0 +1,91 @@
+[gd_scene load_steps=4 format=3 uid="uid://c3y7n8nap0qrs"]
+
+[ext_resource type="Script" path="res://scripts/ui/dialogue_splash.gd" id="1_a2b3c"]
+[ext_resource type="Texture2D" uid="uid://frogprofile123" path="res://sprites/FrogProfile.png" id="2_portrait"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_textbox"]
+bg_color = Color(0.1, 0.1, 0.15, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.6, 0.8, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="DialogueSplash" type="CanvasLayer"]
+layer = 100
+process_mode = 3
+script = ExtResource("1_a2b3c")
+
+[node name="Dimmer" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+modulate = Color(1, 1, 1, 0)
+
+[node name="DialogueContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Portrait" type="TextureRect" parent="DialogueContainer"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -600.0
+offset_right = 532.0
+offset_bottom = -200.0
+grow_vertical = 0
+texture = ExtResource("2_portrait")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextBox" type="PanelContainer" parent="DialogueContainer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -180.0
+offset_right = 400.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_textbox")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DialogueContainer/TextBox"]
+layout_mode = 2
+
+[node name="DialogueLabel" type="Label" parent="DialogueContainer/TextBox/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "Dialogue text goes here..."
+autowrap_mode = 3
+
+[node name="ContinueLabel" type="Label" parent="DialogueContainer/TextBox"]
+layout_mode = 2
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 796.0
+offset_bottom = 156.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 16
+text = "[Press Space or Click to Continue]"
+horizontal_alignment = 2
+vertical_alignment = 2

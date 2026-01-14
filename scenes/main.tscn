@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bbo04pwqcdjkf"]
+[gd_scene load_steps=12 format=3 uid="uid://bbo04pwqcdjkf"]
 
 [ext_resource type="PackedScene" uid="uid://player" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/enemy_spawner.tscn" id="2_spawner"]
@@ -9,8 +9,11 @@
 [ext_resource type="TileSet" uid="uid://gcc8ssfjgqdr" path="res://scenes/desert_tileset.tres" id="7_tileset"]
 [ext_resource type="Script" uid="uid://djvhmh1113j2" path="res://scripts/tilemap_generator.gd" id="8_tilemap_script"]
 [ext_resource type="Script" uid="uid://c5vnw0ns7epn6" path="res://scripts/main.gd" id="9_main"]
+[ext_resource type="PackedScene" uid="uid://c3y7n8m9p0qrs" path="res://scenes/ui/dialogue_splash.tscn" id="10_dialogue"]
+[ext_resource type="PackedScene" uid="uid://titlescreen_scene" path="res://scenes/ui/title_screen.tscn" id="11_title"]
 
 [node name="Main" type="Node2D"]
+process_mode = 1
 script = ExtResource("9_main")
 
 [node name="DesertTileMap" type="TileMap" parent="."]
@@ -35,6 +38,7 @@ position = Vector2(640, 360)
 
 [node name="UpgradeMenu" parent="." instance=ExtResource("5_upgrade")]
 
+[node name="DialogueSplash" parent="." instance=ExtResource("10_dialogue")]
+
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
 autoplay = true
-process_mode = 3

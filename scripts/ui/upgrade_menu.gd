@@ -22,6 +22,8 @@ var weapon_levels = {
 	"lightning_damage": 0,
 	"grenade_count": 0,
 	"grenade_damage": 0,
+	"meteor_damage": 0,
+	"meteor_cooldown": 0,
 	"magnet": 0,
 	"speed_boost": 0,
 	"crown": 0
@@ -206,10 +208,47 @@ func generate_upgrade_options() -> Array:
 			"description": "Increases grenade damage"
 		})
 	
+	if player.unlocked_weapons["meteor"]:
+		upgrade_pool.append({
+			"type": "upgrade",
+			"upgrade_key": "meteor_damage",
+			"name": "Meteor Damage +50%",
+			"description": "Increases meteor impact damage"
+		})
+		upgrade_pool.append({
+			"type": "upgrade",
+			"upgrade_key": "meteor_cooldown",
+			"name": "Meteor Cooldown -0.3s",
+			"description": "Strike more frequently with meteors"
+		})
+	
+	# TEMPORARY: Always add meteor unlock/upgrades to slot 1 for testing
+	var meteor_test_option = null
+	if not player.unlocked_weapons["meteor"]:
+		meteor_test_option = {
+			"type": "unlock",
+			"weapon": "meteor",
+			"name": "Unlock Meteor Weapon",
+			"description": "Rain meteors from above at random enemies"
+		}
+	else:
+		# If already unlocked, show damage upgrade
+		meteor_test_option = {
+			"type": "upgrade",
+			"upgrade_key": "meteor_damage",
+			"name": "Meteor Damage +50%",
+			"description": "Increases meteor impact damage"
+		}
+	
 	# Shuffle and pick 3 random options
 	upgrade_pool.shuffle()
 	var options = []
-	for i in range(min(3, upgrade_pool.size())):
+	
+	# Force meteor option into first slot for testing
+	if meteor_test_option:
+		options.append(meteor_test_option)
+	
+	for i in range(min(2, upgrade_pool.size())):
 		options.append(upgrade_pool[i])
 	
 	print("[UPGRADE MENU] Total options generated: ", options.size())
@@ -233,6 +272,8 @@ func get_weapon_description(weapon_name: String) -> String:
 			return "Chain lightning between enemies"
 		"grenade":
 			return "Explosive projectiles"
+		"meteor":
+			return "Rain meteors from above at random enemies"
 	return "New weapon"
 
 func display_options():
@@ -345,6 +386,12 @@ func apply_weapon_upgrade(upgrade_key: String):
 		"grenade_damage":
 			if player.grenade_weapon:
 				player.grenade_weapon.upgrade_damage()
+		"meteor_damage":
+			if player.meteor_weapon:
+				player.meteor_weapon.upgrade_damage()
+		"meteor_cooldown":
+			if player.meteor_weapon:
+				player.meteor_weapon.upgrade_cooldown()
 		"magnet":
 			player.upgrade_magnet()
 			print("[UPGRADE] Magnet level: ", player.magnet_level, ", pickup range: ", player.pickup_range)

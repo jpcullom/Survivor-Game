@@ -31,6 +31,7 @@ var orbital_weapon = null
 var boomerang_weapon = null
 var lightning_weapon = null
 var grenade_weapon = null
+var meteor_weapon = null
 var current_weapon = null
 var weapon_index = 0  # 0 = pulse, 1 = bullet
 
@@ -41,7 +42,8 @@ var unlocked_weapons = {
 	"orbital": false,
 	"boomerang": false,
 	"lightning": false,
-	"grenade": false
+	"grenade": false,
+	"meteor": false
 }
 
 # Passive items
@@ -58,6 +60,7 @@ var OrbitalWeapon = load("res://scripts/weapons/orbital_weapon.gd")
 var BoomerangWeapon = load("res://scripts/weapons/boomerang_weapon.gd")
 var LightningWeapon = load("res://scripts/weapons/lightning_weapon.gd")
 var GrenadeWeapon = load("res://scripts/weapons/grenade_weapon.gd")
+var MeteorWeapon = load("res://scripts/weapons/meteor_weapon.gd")
 
 # Sprite references
 @onready var sprite = $Sprite2D
@@ -315,3 +318,9 @@ func unlock_weapon(weapon_name: String):
 				grenade_weapon.player = self
 				add_child(grenade_weapon)
 				print("Grenade weapon equipped!")
+		"meteor":
+			if MeteorWeapon and not meteor_weapon:
+				meteor_weapon = MeteorWeapon.new()
+				meteor_weapon.player = self
+				add_child(meteor_weapon)
+				print("Meteor weapon equipped!")

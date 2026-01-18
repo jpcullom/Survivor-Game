@@ -17,8 +17,6 @@ func _ready():
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
 	
-	print("Bullet spawned at: ", global_position)
-	
 	# Auto-despawn after lifetime
 	await get_tree().create_timer(lifetime).timeout
 	if is_instance_valid(self):
@@ -35,9 +33,7 @@ func set_direction(dir: Vector2):
 	rotation = direction.angle()
 
 func _on_body_entered(body):
-	print("Bullet hit body: ", body.name)
 	if body.is_in_group("enemies"):
-		print("Bullet hit enemy! Dealing ", damage, " damage")
 		# Damage enemy
 		if body.has_method("take_damage"):
 			body.take_damage(damage)

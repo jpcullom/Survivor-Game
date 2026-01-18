@@ -10,8 +10,8 @@ enum EnemyType { COYOTE, TOAD, VULTURE }
 # Enemy configuration
 var enemy_type: EnemyType = EnemyType.COYOTE
 
-var health: int = 50
-var max_health: int = 50
+var health: int = 20
+var max_health: int = 20
 var speed: float = 80.0
 var damage: int = 10
 var attack_range: float = 50.0
@@ -72,8 +72,8 @@ func initialize_enemy_type() -> void:
 	match enemy_type:
 		EnemyType.COYOTE:
 			# Coyote - Default balanced enemy
-			health = 50
-			max_health = 50
+			health = 20
+			max_health = 20
 			speed = 80.0
 			damage = 10
 			attack_range = 50.0
@@ -84,10 +84,10 @@ func initialize_enemy_type() -> void:
 			
 		EnemyType.TOAD:
 			# Toad - Tanky, high damage, rare enemy
-			health = 200
-			max_health = 200
+			health = 100
+			max_health = 100
 			speed = 60.0  # Slower than Coyote
-			damage = 25  # Much more damage
+			damage = 20  # Much more damage
 			attack_range = 50.0
 			attack_cooldown = 1.2
 			score_value = 500  # Worth more points
@@ -97,7 +97,7 @@ func initialize_enemy_type() -> void:
 			
 		EnemyType.VULTURE:
 			# Vulture - Fast, dangerous, rare enemy
-			health = 80
+			health = 40
 			max_health = 80
 			speed = 120.0  # Much faster than Coyote
 			damage = 15

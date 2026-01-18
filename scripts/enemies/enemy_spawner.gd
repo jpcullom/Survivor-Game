@@ -54,15 +54,36 @@ func update_difficulty() -> void:
 	
 	var score = hud.score
 	
+	# Late game scaling kicks in at 50000 score
+	var is_late_game = score >= 50000
+	
 	# Decrease spawn interval as score increases (faster spawns)
-	# Every 100 score reduces interval by 0.1 seconds, min 0.5 seconds
-	var interval_reduction = (score / 100.0) * 0.1
-	spawn_interval = max(0.5, base_spawn_interval - interval_reduction)
+	if is_late_game:
+		# Late game: Much more aggressive scaling
+		# Base reduction from early game (50000 / 200 * 0.1 = 25)
+		var early_game_reduction = (50000 / 200.0) * 0.1
+		# Additional late game reduction: every 5000 score reduces by 0.5s
+		var late_game_reduction = ((score - 50000) / 5000.0) * 0.5
+		var interval_reduction = early_game_reduction + late_game_reduction
+		spawn_interval = max(0.2, base_spawn_interval - interval_reduction)  # Lower min for late game
+	else:
+		# Early game: Every 200 score reduces interval by 0.1 seconds, min 1.0 seconds
+		var interval_reduction = (score / 200.0) * 0.1
+		spawn_interval = max(1.0, base_spawn_interval - interval_reduction)
 	
 	# Increase max enemies as score increases
-	# Every 50 score adds 5 more max enemies
-	var enemy_increase = int(score / 50.0) * 5
-	max_enemies = min(absolute_max_enemies, base_max_enemies + enemy_increase)
+	if is_late_game:
+		# Late game: Much more aggressive scaling
+		# Base increase from early game (50000 / 100 * 5 = 2500)
+		var early_game_increase = int(50000 / 100.0) * 5
+		# Additional late game increase: every 2000 score adds 10 more enemies
+		var late_game_increase = int((score - 50000) / 2000.0) * 10
+		var enemy_increase = early_game_increase + late_game_increase
+		max_enemies = min(absolute_max_enemies, base_max_enemies + enemy_increase)
+	else:
+		# Early game: Every 100 score adds 5 more max enemies (slower scaling)
+		var enemy_increase = int(score / 100.0) * 5
+		max_enemies = min(absolute_max_enemies, base_max_enemies + enemy_increase)
 
 # Function to spawn a group of enemies
 func spawn_enemy_group() -> void:

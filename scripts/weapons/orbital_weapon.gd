@@ -11,10 +11,27 @@ var player = null
 var orbital_scene = preload("res://scenes/weapons/orbital.tscn")
 var orbitals: Array = []
 
+# Frog Overload state
+var frog_overload_active = false
+var frog_overload_timer = 0.0
+var frog_overload_duration = 30.0
+var frog_overload_upgrade_key = ""
+var upgrade_menu_ref = null
+var base_damage = 15
+var base_orbital_count = 3
+var base_orbit_speed = 2.0
+
 func _ready():
 	print("[OrbitalWeapon] _ready() called, player = ", player)
 	# Spawn initial orbitals
 	spawn_orbitals()
+
+func _process(delta: float) -> void:
+	# Handle Frog Overload timer
+	if frog_overload_active:
+		frog_overload_timer -= delta
+		if frog_overload_timer <= 0:
+			end_frog_overload()
 
 func spawn_orbitals():
 	print("[OrbitalWeapon] spawn_orbitals() called")
@@ -45,7 +62,13 @@ func spawn_orbitals():
 		orbital.player = player
 		orbital.damage = damage
 		orbital.orbit_radius = orbit_radius
-		orbital.orbit_speed = orbit_speed
+		
+		# Apply Frog Overload speed boost (5x faster!)
+		if frog_overload_active:
+			orbital.orbit_speed = orbit_speed * 5.0
+		else:
+			orbital.orbit_speed = orbit_speed
+		
 		orbital.current_angle = i * angle_step
 		
 		# Calculate initial position
@@ -92,3 +115,53 @@ func upgrade_speed():
 	for orbital in orbitals:
 		if is_instance_valid(orbital):
 			orbital.orbit_speed = orbit_speed
+
+func activate_frog_overload(upgrade_key: String, upgrade_menu):
+	print("[ORBITAL WEAPON] FROG OVERLOAD ACTIVATED!")
+	frog_overload_active = true
+	frog_overload_timer = frog_overload_duration
+	frog_overload_upgrade_key = upgrade_key
+	upgrade_menu_ref = upgrade_menu
+	
+	# Boost all existing orbitals to 5x speed
+	for orbital in orbitals:
+		if is_instance_valid(orbital):
+			orbital.orbit_speed = orbit_speed * 5.0
+	
+	print("[ORBITAL WEAPON] 5x spin speed for ", frog_overload_duration, " seconds!")
+
+func end_frog_overload():
+	print("[ORBITAL WEAPON] Frog Overload ended")
+	frog_overload_active = false
+	frog_overload_timer = 0.0
+	
+	# Reset orbital speeds to normal
+	for orbital in orbitals:
+		if is_instance_valid(orbital):
+			orbital.orbit_speed = orbit_speed
+	
+	# Reset the upgrade level after overload ends
+	if upgrade_menu_ref and frog_overload_upgrade_key != "":
+		print("[ORBITAL WEAPON] Resetting ", frog_overload_upgrade_key, " level from ", upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key], " to 0")
+		upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key] = 0
+		
+		# Reset weapon stats to base values
+		if frog_overload_upgrade_key == "orbital_count":
+			orbital_count = base_orbital_count
+			spawn_orbitals()  # Respawn with base count
+			print("[ORBITAL WEAPON] Reset orbital_count to base: ", base_orbital_count)
+		elif frog_overload_upgrade_key == "orbital_damage":
+			damage = base_damage
+			for orbital in orbitals:
+				if is_instance_valid(orbital):
+					orbital.damage = base_damage
+			print("[ORBITAL WEAPON] Reset damage to base: ", base_damage)
+		elif frog_overload_upgrade_key == "orbital_speed":
+			orbit_speed = base_orbit_speed
+			for orbital in orbitals:
+				if is_instance_valid(orbital):
+					orbital.orbit_speed = base_orbit_speed
+			print("[ORBITAL WEAPON] Reset orbit_speed to base: ", base_orbit_speed)
+		
+		frog_overload_upgrade_key = ""
+		upgrade_menu_ref = null

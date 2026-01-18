@@ -16,6 +16,7 @@ var weapon_levels = {
 	"pulse_area": 0,
 	"orbital_count": 0,
 	"orbital_damage": 0,
+	"orbital_speed": 0,
 	"boomerang_count": 0,
 	"boomerang_damage": 0,
 	"lightning_chains": 0,
@@ -24,6 +25,7 @@ var weapon_levels = {
 	"grenade_damage": 0,
 	"meteor_damage": 0,
 	"meteor_cooldown": 0,
+	"meteor_count": 0,
 	"magnet": 0,
 	"speed_boost": 0,
 	"crown": 0
@@ -142,13 +144,13 @@ func generate_upgrade_options() -> Array:
 		upgrade_pool.append({
 			"type": "upgrade",
 			"upgrade_key": "pulse_damage",
-			"name": "Pulse Damage +50%",
+			"name": "Pulse Damage +30%",
 			"description": "Increases pulse weapon damage"
 		})
 		upgrade_pool.append({
 			"type": "upgrade",
 			"upgrade_key": "pulse_area",
-			"name": "Pulse Area +30%",
+			"name": "Pulse Area +20%",
 			"description": "Increases pulse weapon range"
 		})
 	
@@ -164,6 +166,12 @@ func generate_upgrade_options() -> Array:
 			"upgrade_key": "orbital_damage",
 			"name": "Orbital Damage +50%",
 			"description": "Increases orbital damage"
+		})
+		upgrade_pool.append({
+			"type": "upgrade",
+			"upgrade_key": "orbital_speed",
+			"name": "Orbital Speed +0.5",
+			"description": "Makes orbitals rotate faster"
 		})
 	
 	if player.unlocked_weapons["boomerang"]:
@@ -222,33 +230,11 @@ func generate_upgrade_options() -> Array:
 			"description": "Strike more frequently with meteors"
 		})
 	
-	# TEMPORARY: Always add meteor unlock/upgrades to slot 1 for testing
-	var meteor_test_option = null
-	if not player.unlocked_weapons["meteor"]:
-		meteor_test_option = {
-			"type": "unlock",
-			"weapon": "meteor",
-			"name": "Unlock Meteor Weapon",
-			"description": "Rain meteors from above at random enemies"
-		}
-	else:
-		# If already unlocked, show damage upgrade
-		meteor_test_option = {
-			"type": "upgrade",
-			"upgrade_key": "meteor_damage",
-			"name": "Meteor Damage +50%",
-			"description": "Increases meteor impact damage"
-		}
-	
 	# Shuffle and pick 3 random options
 	upgrade_pool.shuffle()
 	var options = []
 	
-	# Force meteor option into first slot for testing
-	if meteor_test_option:
-		options.append(meteor_test_option)
-	
-	for i in range(min(2, upgrade_pool.size())):
+	for i in range(min(3, upgrade_pool.size())):
 		options.append(upgrade_pool[i])
 	
 	print("[UPGRADE MENU] Total options generated: ", options.size())
@@ -344,54 +330,97 @@ func apply_weapon_upgrade(upgrade_key: String):
 	weapon_levels[upgrade_key] += 1
 	var level = weapon_levels[upgrade_key]
 	
+	print("[UPGRADE] ", upgrade_key, " level is now: ", level)
+	
+	# Check for Frog Overload trigger (level 5)
+	var trigger_frog_overload = false
+	
 	match upgrade_key:
 		"bullet_damage":
 			if player.bullet_weapon:
 				player.bullet_weapon.damage = int(player.bullet_weapon.damage * 1.5)
 				print("Bullet damage: ", player.bullet_weapon.damage)
+				if level >= 5:
+					trigger_frog_overload = true
 		"bullet_capacity":
 			if player.bullet_weapon:
 				player.bullet_weapon.max_bullets += 2
 				player.bullet_weapon.current_bullets = player.bullet_weapon.max_bullets
 				print("Bullet capacity: ", player.bullet_weapon.max_bullets)
+				if level >= 5:
+					trigger_frog_overload = true
 		"pulse_damage":
 			if player.pulse_weapon:
-				player.pulse_weapon.damage = int(player.pulse_weapon.damage * 1.5)
+				player.pulse_weapon.damage = int(player.pulse_weapon.damage * 1.3)
 				print("Pulse damage: ", player.pulse_weapon.damage)
+				if level >= 5:
+					trigger_frog_overload = true
 		"pulse_area":
 			if player.pulse_weapon:
-				player.pulse_weapon.attack_range *= 1.3
+				player.pulse_weapon.attack_range *= 1.2
 				print("Pulse range: ", player.pulse_weapon.attack_range)
+				if level >= 5:
+					trigger_frog_overload = true
 		"orbital_count":
 			if player.orbital_weapon:
 				player.orbital_weapon.upgrade_count()
+				if level >= 5:
+					trigger_frog_overload = true
 		"orbital_damage":
 			if player.orbital_weapon:
 				player.orbital_weapon.upgrade_damage()
+				if level >= 5:
+					trigger_frog_overload = true
+		"orbital_speed":
+			if player.orbital_weapon:
+				player.orbital_weapon.upgrade_speed()
+				if level >= 5:
+					trigger_frog_overload = true
 		"boomerang_count":
 			if player.boomerang_weapon:
 				player.boomerang_weapon.upgrade_count()
+				if level >= 5:
+					trigger_frog_overload = true
 		"boomerang_damage":
 			if player.boomerang_weapon:
 				player.boomerang_weapon.upgrade_damage()
+				if level >= 5:
+					trigger_frog_overload = true
 		"lightning_chains":
 			if player.lightning_weapon:
 				player.lightning_weapon.upgrade_chains()
+				if level >= 5:
+					trigger_frog_overload = true
 		"lightning_damage":
 			if player.lightning_weapon:
 				player.lightning_weapon.upgrade_damage()
+				if level >= 5:
+					trigger_frog_overload = true
 		"grenade_count":
 			if player.grenade_weapon:
 				player.grenade_weapon.upgrade_count()
+				if level >= 5:
+					trigger_frog_overload = true
 		"grenade_damage":
 			if player.grenade_weapon:
 				player.grenade_weapon.upgrade_damage()
+				if level >= 5:
+					trigger_frog_overload = true
 		"meteor_damage":
 			if player.meteor_weapon:
 				player.meteor_weapon.upgrade_damage()
+				if level >= 5:
+					trigger_frog_overload = true
 		"meteor_cooldown":
 			if player.meteor_weapon:
 				player.meteor_weapon.upgrade_cooldown()
+				if level >= 5:
+					trigger_frog_overload = true
+		"meteor_count":
+			if player.meteor_weapon:
+				player.meteor_weapon.upgrade_count()
+				if level >= 5:
+					trigger_frog_overload = true
 		"magnet":
 			player.upgrade_magnet()
 			print("[UPGRADE] Magnet level: ", player.magnet_level, ", pickup range: ", player.pickup_range)
@@ -402,6 +431,44 @@ func apply_weapon_upgrade(upgrade_key: String):
 			player.upgrade_crown()
 			var current_bonus = player.crown_level * 5
 			print("[UPGRADE] Crown level: ", player.crown_level, ", bonus per pickup: +", current_bonus)
+	
+	# Trigger Frog Overload if level reached 5
+	if trigger_frog_overload:
+		print("[UPGRADE MENU] FROG OVERLOAD TRIGGERED FOR: ", upgrade_key)
+		trigger_frog_overload_for_upgrade(upgrade_key)
+
+func trigger_frog_overload_for_upgrade(upgrade_key: String):
+	print("[FROG OVERLOAD] Triggering for: ", upgrade_key)
+	print("[FROG OVERLOAD] Level at trigger: ", weapon_levels[upgrade_key])
+	
+	# Show dialogue splash
+	var dialogue_splash = get_tree().get_first_node_in_group("dialogue_splash")
+	if dialogue_splash and dialogue_splash.has_method("show_frog_overload"):
+		dialogue_splash.show_frog_overload()
+	
+	# Activate weapon-specific overload
+	match upgrade_key:
+		"bullet_damage", "bullet_capacity":
+			if player.bullet_weapon:
+				player.bullet_weapon.activate_frog_overload(upgrade_key, self)
+		"pulse_damage", "pulse_area":
+			if player.pulse_weapon:
+				player.pulse_weapon.activate_frog_overload(upgrade_key, self)
+		"boomerang_damage", "boomerang_count":
+			if player.boomerang_weapon:
+				player.boomerang_weapon.activate_frog_overload(upgrade_key, self)
+		"grenade_damage", "grenade_count":
+			if player.grenade_weapon:
+				player.grenade_weapon.activate_frog_overload(upgrade_key, self)
+		"lightning_damage", "lightning_chains":
+			if player.lightning_weapon:
+				player.lightning_weapon.activate_frog_overload(upgrade_key, self)
+		"orbital_damage", "orbital_count", "orbital_speed":
+			if player.orbital_weapon:
+				player.orbital_weapon.activate_frog_overload(upgrade_key, self)
+		"meteor_damage", "meteor_cooldown", "meteor_count":
+			if player.meteor_weapon:
+				player.meteor_weapon.activate_frog_overload(upgrade_key, self)
 
 func _input(event):
 	if not visible:

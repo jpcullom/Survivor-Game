@@ -10,12 +10,18 @@ var traveled_distance: float = 0.0
 var returning: bool = false
 var hit_enemies: Dictionary = {}  # Track enemies we've hit recently
 var hit_cooldown: float = 0.3  # Cooldown before hitting same enemy again
+var frog_overload_scale: float = 1.0  # Size multiplier for Frog Overload
 
 func _ready():
 	print("[Boomerang] _ready() called")
 	# Set up collision detection
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
+	
+	# Apply Frog Overload scale
+	if frog_overload_scale > 1.0:
+		scale = Vector2(frog_overload_scale, frog_overload_scale)
+		print("[Boomerang] Applied Frog Overload scale: ", frog_overload_scale)
 
 func _process(delta: float) -> void:
 	if not player or not is_instance_valid(player):

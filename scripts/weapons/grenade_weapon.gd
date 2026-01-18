@@ -14,8 +14,24 @@ var grenade_scene = preload("res://scenes/weapons/grenade.tscn")
 var auto_attack_timer: float = 0.0
 var throw_angle: float = 0.0
 
+# Frog Overload state
+var frog_overload_active = false
+var frog_overload_timer = 0.0
+var frog_overload_duration = 30.0
+var frog_overload_upgrade_key = ""
+var upgrade_menu_ref = null
+var base_damage = 30
+var base_grenade_count = 1
+var base_explosion_radius = 80.0
+
 func _process(delta: float) -> void:
 	auto_attack_timer += delta
+	
+	# Handle Frog Overload timer
+	if frog_overload_active:
+		frog_overload_timer -= delta
+		if frog_overload_timer <= 0:
+			end_frog_overload()
 	
 	if auto_attack_timer >= cooldown and can_attack():
 		attack()
@@ -39,7 +55,13 @@ func attack():
 		grenade.damage = damage
 		grenade.speed = speed
 		grenade.travel_time = travel_time
-		grenade.explosion_radius = explosion_radius
+		
+		# Apply Frog Overload explosion boost (3x larger explosions)
+		if frog_overload_active:
+			grenade.explosion_radius = explosion_radius * 3.0
+		else:
+			grenade.explosion_radius = explosion_radius
+		
 		grenade.global_position = player.global_position
 		
 		# Calculate throw direction
@@ -68,3 +90,32 @@ func upgrade_speed():
 	cooldown = max(0.8, cooldown - 0.2)
 	speed += 30
 	print("[GrenadeWeapon] Grenade speed upgraded - cooldown: ", cooldown, " speed: ", speed)
+
+func activate_frog_overload(upgrade_key: String, upgrade_menu):
+	print("[GRENADE WEAPON] FROG OVERLOAD ACTIVATED!")
+	frog_overload_active = true
+	frog_overload_timer = frog_overload_duration
+	frog_overload_upgrade_key = upgrade_key
+	upgrade_menu_ref = upgrade_menu
+	print("[GRENADE WEAPON] 3x explosion radius for ", frog_overload_duration, " seconds!")
+
+func end_frog_overload():
+	print("[GRENADE WEAPON] Frog Overload ended")
+	frog_overload_active = false
+	frog_overload_timer = 0.0
+	
+	# Reset the upgrade level after overload ends
+	if upgrade_menu_ref and frog_overload_upgrade_key != "":
+		print("[GRENADE WEAPON] Resetting ", frog_overload_upgrade_key, " level from ", upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key], " to 0")
+		upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key] = 0
+		
+		# Reset weapon stats to base values
+		if frog_overload_upgrade_key == "grenade_count":
+			grenade_count = base_grenade_count
+			print("[GRENADE WEAPON] Reset grenade_count to base: ", base_grenade_count)
+		elif frog_overload_upgrade_key == "grenade_damage":
+			damage = base_damage
+			print("[GRENADE WEAPON] Reset damage to base: ", base_damage)
+		
+		frog_overload_upgrade_key = ""
+		upgrade_menu_ref = null

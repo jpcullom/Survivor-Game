@@ -1,7 +1,7 @@
 extends Area2D
 
 var gold_value = 5
-var move_speed = 150.0
+var move_speed = 600.0
 var player = null
 
 func _ready():

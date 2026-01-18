@@ -10,14 +10,31 @@ var fire_delay = 0.1  # Time between each bullet
 # Auto-attack timer
 var auto_attack_timer: float = 0.0
 
+# Frog Overload state
+var frog_overload_active = false
+var frog_overload_timer = 0.0
+var frog_overload_duration = 30.0
+var base_reload_time = 2.0
+var frog_overload_upgrade_key = ""
+var upgrade_menu_ref = null
+var base_max_bullets = 6  # Store the original value
+var base_damage = 10  # Store the original value
+
 func _init():
 	damage = 10
 	cooldown = 0.1  # Quick fire rate
 	attack_range = 500.0  # Bullets can go far
+	base_reload_time = reload_time
 
 func _process(delta: float) -> void:
 	if not player:
 		return
+	
+	# Handle Frog Overload timer
+	if frog_overload_active:
+		frog_overload_timer -= delta
+		if frog_overload_timer <= 0:
+			end_frog_overload()
 	
 	# Auto-attack timer
 	auto_attack_timer += delta
@@ -29,15 +46,14 @@ func attack():
 	if not player or is_reloading:
 		return
 	
-	if current_bullets <= 0:
+	# Skip reload check during Frog Overload
+	if not frog_overload_active and current_bullets <= 0:
 		# Start reload
 		reload()
 		return
 	
 	if not can_attack():
 		return
-	
-	print("Bullet fired! (", current_bullets, "/", max_bullets, " remaining)")
 	
 	# Find closest enemy
 	var closest_enemy = get_closest_enemy()
@@ -49,14 +65,19 @@ func attack():
 		bullet.global_position = player.global_position
 		bullet.damage = damage
 		
+		# Increase bullet speed during Frog Overload
+		if frog_overload_active:
+			bullet.speed *= 2.0
+		
 		# Set direction towards enemy
 		var direction = (closest_enemy.global_position - player.global_position).normalized()
 		bullet.set_direction(direction)
 	else:
 		print("No enemies in range!")
 	
-	# Use up a bullet
-	current_bullets -= 1
+	# Use up a bullet only if not in Frog Overload
+	if not frog_overload_active:
+		current_bullets -= 1
 	
 	# Start cooldown between shots
 	start_cooldown()
@@ -96,3 +117,38 @@ func reload():
 	current_bullets = max_bullets
 	is_reloading = false
 	print("Reload complete!")
+
+func activate_frog_overload(upgrade_key: String, upgrade_menu):
+	print("[BULLET WEAPON] FROG OVERLOAD ACTIVATED!")
+	frog_overload_active = true
+	frog_overload_timer = frog_overload_duration
+	frog_overload_upgrade_key = upgrade_key
+	upgrade_menu_ref = upgrade_menu
+	
+	# Instant reload and cancel any ongoing reload
+	is_reloading = false
+	current_bullets = max_bullets
+	
+	print("[BULLET WEAPON] No reload + faster bullets for ", frog_overload_duration, " seconds!")
+
+func end_frog_overload():
+	print("[BULLET WEAPON] Frog Overload ended")
+	frog_overload_active = false
+	frog_overload_timer = 0.0
+	
+	# Reset the upgrade level after overload ends
+	if upgrade_menu_ref and frog_overload_upgrade_key != "":
+		print("[BULLET WEAPON] Resetting ", frog_overload_upgrade_key, " level from ", upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key], " to 0")
+		upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key] = 0
+		
+		# Reset weapon stats to base values
+		if frog_overload_upgrade_key == "bullet_capacity":
+			max_bullets = base_max_bullets
+			current_bullets = max_bullets
+			print("[BULLET WEAPON] Reset max_bullets to base: ", base_max_bullets)
+		elif frog_overload_upgrade_key == "bullet_damage":
+			damage = base_damage
+			print("[BULLET WEAPON] Reset damage to base: ", base_damage)
+		
+		frog_overload_upgrade_key = ""
+		upgrade_menu_ref = null

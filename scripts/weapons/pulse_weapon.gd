@@ -3,14 +3,23 @@ extends Node2D
 class_name PulseWeapon
 
 # Minimal compatibility layer for missing WeaponBase
-var damage: int = 10
-var cooldown: float = 0.5
-var attack_range: float = 100.0
+var damage: int = 5
+var cooldown: float = 1.5
+var attack_range: float = 75.0
 var player = null
 var _can_attack: bool = true
 
 # Auto-attack timer
 var auto_attack_timer: float = 0.0
+
+# Frog Overload state
+var frog_overload_active = false
+var frog_overload_timer = 0.0
+var frog_overload_duration = 30.0
+var frog_overload_upgrade_key = ""
+var upgrade_menu_ref = null
+var base_damage = 5
+var base_attack_range = 75.0
 
 func can_attack() -> bool:
 	return _can_attack
@@ -30,6 +39,12 @@ func _init():
 func _process(delta: float) -> void:
 	if not player:
 		return
+	
+	# Handle Frog Overload timer
+	if frog_overload_active:
+		frog_overload_timer -= delta
+		if frog_overload_timer <= 0:
+			end_frog_overload()
 	
 	# Auto-attack timer
 	auto_attack_timer += delta
@@ -63,3 +78,38 @@ func attack():
 	
 	# Start cooldown
 	start_cooldown()
+
+func activate_frog_overload(upgrade_key: String, upgrade_menu):
+	print("[PULSE WEAPON] FROG OVERLOAD ACTIVATED!")
+	frog_overload_active = true
+	frog_overload_timer = frog_overload_duration
+	frog_overload_upgrade_key = upgrade_key
+	upgrade_menu_ref = upgrade_menu
+	
+	# Get viewport size for full screen coverage
+	var viewport = player.get_viewport()
+	if viewport:
+		var viewport_size = viewport.get_visible_rect().size
+		attack_range = max(viewport_size.x, viewport_size.y) * 2.0  # Cover entire screen and beyond
+		print("[PULSE WEAPON] Full screen coverage! Range: ", attack_range)
+
+func end_frog_overload():
+	print("[PULSE WEAPON] Frog Overload ended")
+	frog_overload_active = false
+	frog_overload_timer = 0.0
+	
+	# Reset the upgrade level after overload ends
+	if upgrade_menu_ref and frog_overload_upgrade_key != "":
+		print("[PULSE WEAPON] Resetting ", frog_overload_upgrade_key, " level from ", upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key], " to 0")
+		upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key] = 0
+		
+		# Reset weapon stats to base values
+		if frog_overload_upgrade_key == "pulse_area":
+			attack_range = base_attack_range
+			print("[PULSE WEAPON] Reset attack_range to base: ", base_attack_range)
+		elif frog_overload_upgrade_key == "pulse_damage":
+			damage = base_damage
+			print("[PULSE WEAPON] Reset damage to base: ", base_damage)
+		
+		frog_overload_upgrade_key = ""
+		upgrade_menu_ref = null

@@ -34,6 +34,7 @@ var threshold_dialogues = {
 var displayed_thresholds = []
 
 func _ready():
+	add_to_group("dialogue_splash")
 	hide_dialogue()
 	set_process_input(true)
 
@@ -41,7 +42,6 @@ func mark_game_started():
 	game_started = true
 
 func _input(event):
-	print("[DIALOGUE] _input called, is_displaying=", is_displaying)
 	if not is_displaying:
 		return
 		
@@ -122,9 +122,30 @@ func hide_dialogue():
 	)
 
 func check_score_threshold(score: int):
-	print("[DIALOGUE] check_score_threshold called with score: ", score)
 	for threshold in threshold_dialogues.keys():
 		if score >= threshold and threshold not in displayed_thresholds:
 			print("[DIALOGUE] Threshold ", threshold, " reached!")
 			show_dialogue_for_threshold(threshold)
 			break
+
+func show_frog_overload():
+	print("[DIALOGUE] FROG OVERLOAD TRIGGERED!")
+	is_displaying = true
+	get_tree().paused = true
+	
+	# Show UI elements with animation
+	dimmer.visible = true
+	dialogue_container.visible = true
+	
+	# Animate dimmer fade in
+	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_property(dimmer, "modulate:a", 0.7, 0.3)
+	
+	# Display FROG OVERLOAD message
+	dialogue_label.text = "FROOOOOOG OVERLOOOOAD!!!"
+	continue_label.visible = true
+	
+	# Auto-hide after a short delay
+	await get_tree().create_timer(2.0, true, false, true).timeout
+	hide_dialogue()

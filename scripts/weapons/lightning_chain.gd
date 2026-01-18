@@ -44,10 +44,14 @@ func find_next_target():
 	
 	var enemies = get_tree().get_nodes_in_group("enemies")
 	var closest_enemy = null
-	var closest_distance = chain_range
+	var closest_distance = INF  # No distance limit - find any enemy!
 	
 	# Find closest enemy we haven't hit yet
 	var search_pos = current_target.global_position if current_target else player.global_position
+	
+	# Only apply range limit for the FIRST target (from player)
+	if current_target == null:
+		closest_distance = chain_range
 	
 	for enemy in enemies:
 		if not is_instance_valid(enemy) or enemy in hit_enemies:

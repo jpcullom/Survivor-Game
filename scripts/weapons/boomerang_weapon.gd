@@ -13,8 +13,23 @@ var boomerang_scene = preload("res://scenes/weapons/boomerang.tscn")
 var auto_attack_timer: float = 0.0
 var current_angle: float = 0.0  # For spreading multiple boomerangs
 
+# Frog Overload state
+var frog_overload_active = false
+var frog_overload_timer = 0.0
+var frog_overload_duration = 30.0
+var frog_overload_upgrade_key = ""
+var upgrade_menu_ref = null
+var base_damage = 20
+var base_boomerang_count = 1
+
 func _process(delta: float) -> void:
 	auto_attack_timer += delta
+	
+	# Handle Frog Overload timer
+	if frog_overload_active:
+		frog_overload_timer -= delta
+		if frog_overload_timer <= 0:
+			end_frog_overload()
 	
 	if auto_attack_timer >= cooldown and can_attack():
 		attack()
@@ -39,6 +54,10 @@ func attack():
 		boomerang.speed = speed
 		boomerang.max_distance = max_distance
 		boomerang.global_position = player.global_position
+		
+		# Apply Frog Overload size increase
+		if frog_overload_active:
+			boomerang.frog_overload_scale = 5.0
 		
 		# Calculate direction for this boomerang
 		var throw_angle = current_angle + (i * angle_step)
@@ -66,3 +85,32 @@ func upgrade_speed():
 	speed += 50
 	cooldown = max(0.5, cooldown - 0.1)  # Also reduce cooldown slightly
 	print("[BoomerangWeapon] Boomerang speed upgraded to: ", speed, " cooldown: ", cooldown)
+
+func activate_frog_overload(upgrade_key: String, upgrade_menu):
+	print("[BOOMERANG WEAPON] FROG OVERLOAD ACTIVATED!")
+	frog_overload_active = true
+	frog_overload_timer = frog_overload_duration
+	frog_overload_upgrade_key = upgrade_key
+	upgrade_menu_ref = upgrade_menu
+	print("[BOOMERANG WEAPON] 5x size boost for ", frog_overload_duration, " seconds!")
+
+func end_frog_overload():
+	print("[BOOMERANG WEAPON] Frog Overload ended")
+	frog_overload_active = false
+	frog_overload_timer = 0.0
+	
+	# Reset the upgrade level after overload ends
+	if upgrade_menu_ref and frog_overload_upgrade_key != "":
+		print("[BOOMERANG WEAPON] Resetting ", frog_overload_upgrade_key, " level from ", upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key], " to 0")
+		upgrade_menu_ref.weapon_levels[frog_overload_upgrade_key] = 0
+		
+		# Reset weapon stats to base values
+		if frog_overload_upgrade_key == "boomerang_count":
+			boomerang_count = base_boomerang_count
+			print("[BOOMERANG WEAPON] Reset boomerang_count to base: ", base_boomerang_count)
+		elif frog_overload_upgrade_key == "boomerang_damage":
+			damage = base_damage
+			print("[BOOMERANG WEAPON] Reset damage to base: ", base_damage)
+		
+		frog_overload_upgrade_key = ""
+		upgrade_menu_ref = null

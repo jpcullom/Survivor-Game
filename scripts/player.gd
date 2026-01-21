@@ -213,11 +213,17 @@ func take_damage(amount):
 func die():
 	print("Player has died!")
 	
-	# Get references to HUD and Game Over screen
+	# Get references to HUD, Game Over screen, and GameManager
 	var hud = get_tree().get_first_node_in_group("hud")
 	var game_over = get_node("/root/Main/GameOver")
+	var game_manager = get_node("/root/Main/GameManager")
 	
 	if hud and game_over:
+		# Update GameManager with final score and save high score
+		if game_manager:
+			game_manager.score = hud.score
+			game_manager.end_game()
+		
 		# Show game over screen with final score
 		game_over.show_game_over(hud.score)
 	

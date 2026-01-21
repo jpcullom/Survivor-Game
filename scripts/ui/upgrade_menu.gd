@@ -35,6 +35,17 @@ var weapon_levels = {
 var current_options = []  # Will hold 3 random upgrade options
 var selected_option = 0  # 0, 1, or 2
 
+# Weapon sprites for upgrade menu
+var weapon_sprites = {
+	"bullet": preload("res://sprites/pistol.png"),
+	"boomerang": preload("res://sprites/boomerang.png"),
+	"meteor": preload("res://sprites/meteor.png"),
+	"grenade": preload("res://sprites/grenade.png"),
+	"lightning": preload("res://sprites/lightning.png"),
+	"orbital": preload("res://sprites/orbital.png"),
+	"pulse": preload("res://sprites/pulse.png")
+}
+
 # UI references (we'll create these dynamically)
 var option_buttons = []
 var option_labels = []
@@ -115,15 +126,22 @@ func generate_upgrade_options() -> Array:
 		"description": "Add +" + str(next_crown_bonus) + " to each gold pickup (Current level: " + str(weapon_levels["crown"]) + ")"
 	})
 	
-	# Add weapon unlocks for locked weapons
+	# Add weapon unlocks for locked weapons (cap at 6 weapons total)
+	var unlocked_count = 0
 	for weapon_name in player.unlocked_weapons:
-		if not player.unlocked_weapons[weapon_name]:
-			upgrade_pool.append({
-				"type": "unlock",
-				"weapon": weapon_name,
-				"name": "Unlock " + weapon_name.capitalize() + " Weapon",
-				"description": get_weapon_description(weapon_name)
-			})
+		if player.unlocked_weapons[weapon_name]:
+			unlocked_count += 1
+	
+	# Only offer weapon unlocks if we haven't reached the cap
+	if unlocked_count < 6:
+		for weapon_name in player.unlocked_weapons:
+			if not player.unlocked_weapons[weapon_name]:
+				upgrade_pool.append({
+					"type": "unlock",
+					"weapon": weapon_name,
+					"name": "Unlock " + weapon_name.capitalize() + " Weapon",
+					"description": get_weapon_description(weapon_name)
+				})
 	
 	# Add upgrades for unlocked weapons
 	if player.unlocked_weapons["bullet"]:
@@ -230,11 +248,32 @@ func generate_upgrade_options() -> Array:
 			"description": "Strike more frequently with meteors"
 		})
 	
+	# TEMPORARY: Always add pulse upgrade to slot 1 for testing
+	var test_option = null
+	if player.unlocked_weapons["pulse"]:
+		test_option = {
+			"type": "upgrade",
+			"upgrade_key": "pulse_damage",
+			"name": "Pulse Damage +30%",
+			"description": "Increases pulse weapon damage"
+		}
+	else:
+		test_option = {
+			"type": "unlock",
+			"weapon": "pulse",
+			"name": "Unlock Pulse Weapon",
+			"description": "AoE damage around player"
+		}
+	
 	# Shuffle and pick 3 random options
 	upgrade_pool.shuffle()
 	var options = []
 	
-	for i in range(min(3, upgrade_pool.size())):
+	# Force test option into first slot
+	if test_option:
+		options.append(test_option)
+	
+	for i in range(min(2, upgrade_pool.size())):
 		options.append(upgrade_pool[i])
 	
 	print("[UPGRADE MENU] Total options generated: ", options.size())
@@ -277,6 +316,7 @@ func display_options():
 		
 		if i < current_options.size():
 			var opt = current_options[i]
+			var vbox = option_panel.get_node_or_null("VBox")
 			var name_label = option_panel.get_node_or_null("VBox/NameLabel")
 			var desc_label = option_panel.get_node_or_null("VBox/DescLabel")
 			
@@ -284,6 +324,46 @@ func display_options():
 				name_label.text = "[" + str(i + 1) + "] " + opt["name"]
 			if desc_label:
 				desc_label.text = opt["description"]
+			
+			# Add weapon sprite if applicable
+			var weapon_key = get_weapon_key_from_option(opt)
+			if weapon_key and weapon_key in weapon_sprites:
+				# Check if icon already exists
+				var existing_icon = vbox.get_node_or_null("WeaponIcon")
+				if not existing_icon and vbox:
+					var icon = TextureRect.new()
+					icon.name = "WeaponIcon"
+					icon.texture = weapon_sprites[weapon_key]
+					icon.custom_minimum_size = Vector2(40, 40)
+					icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+					icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+					
+					# Apply weapon-specific scaling
+					if weapon_key == "boomerang":
+						icon.scale = Vector2(0.5, 0.5)
+					elif weapon_key == "bullet":
+						icon.scale = Vector2(0.9, 0.9)
+					elif weapon_key == "meteor":
+						icon.scale = Vector2(1.4, 1.4)
+					elif weapon_key == "grenade":
+						icon.scale = Vector2(0.8, 0.8)
+					elif weapon_key == "lightning":
+						icon.scale = Vector2(0.7, 0.7)
+					elif weapon_key == "orbital":
+						icon.scale = Vector2(0.8, 0.8)
+					elif weapon_key == "pulse":
+						icon.scale = Vector2(0.8, 0.8)
+					
+					vbox.add_child(icon)
+					vbox.move_child(icon, 0)  # Put icon at the top
+				elif existing_icon:
+					existing_icon.texture = weapon_sprites[weapon_key]
+					existing_icon.visible = true
+			else:
+				# Hide icon if it exists but not needed
+				var existing_icon = vbox.get_node_or_null("WeaponIcon") if vbox else null
+				if existing_icon:
+					existing_icon.visible = false
 			
 			option_panel.visible = true
 		else:
@@ -294,6 +374,29 @@ func display_options():
 	for i in range(current_options.size()):
 		var opt = current_options[i]
 		print("  [", i + 1, "] ", opt["name"], " - ", opt["description"])
+
+func get_weapon_key_from_option(opt: Dictionary) -> String:
+	# Extract weapon key from upgrade option
+	if opt["type"] == "unlock":
+		return opt["weapon"]
+	elif opt["type"] == "upgrade" and "upgrade_key" in opt:
+		var key = opt["upgrade_key"]
+		# Extract weapon name from upgrade key (e.g., "bullet_damage" -> "bullet")
+		if key.begins_with("bullet_"):
+			return "bullet"
+		elif key.begins_with("boomerang_"):
+			return "boomerang"
+		elif key.begins_with("meteor_"):
+			return "meteor"
+		elif key.begins_with("grenade_"):
+			return "grenade"
+		elif key.begins_with("lightning_"):
+			return "lightning"
+		elif key.begins_with("orbital_"):
+			return "orbital"
+		elif key.begins_with("pulse_"):
+			return "pulse"
+	return ""
 
 func apply_upgrade(option_index: int):
 	if option_index < 0 or option_index >= current_options.size():
@@ -317,6 +420,10 @@ func apply_upgrade(option_index: int):
 	# Apply the upgrade
 	if option["type"] == "unlock":
 		player.unlock_weapon(option["weapon"])
+		# Update HUD weapon slots
+		var hud_node = get_tree().get_first_node_in_group("hud")
+		if hud_node and hud_node.has_method("update_weapon_slots"):
+			hud_node.update_weapon_slots()
 	elif option["type"] == "upgrade":
 		apply_weapon_upgrade(option["upgrade_key"])
 	

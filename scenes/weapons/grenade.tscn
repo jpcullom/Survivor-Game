@@ -1,11 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://b7p2q5k8m4woa"]
+[gd_scene load_steps=3 format=3 uid="uid://b7p2q5k8m4woa"]
 
 [ext_resource type="Script" path="res://scripts/weapons/grenade.gd" id="1_grenade"]
+[ext_resource type="Texture2D" path="res://sprites/grenade.png" id="2_grenade_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_grenade"]
 radius = 6.0
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_grenade"]
 
 [node name="Grenade" type="Area2D"]
 collision_layer = 4
@@ -16,6 +15,5 @@ script = ExtResource("1_grenade")
 shape = SubResource("CircleShape2D_grenade")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.2, 0.2, 0.2, 1)
-scale = Vector2(10, 10)
-texture = SubResource("CanvasTexture_grenade")
+scale = Vector2(0.072, 0.072)
+texture = ExtResource("2_grenade_sprite")

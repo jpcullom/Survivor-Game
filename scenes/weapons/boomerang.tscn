@@ -1,12 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://d2iak5m3p8qw1"]
+[gd_scene load_steps=3 format=3 uid="uid://d2iak5m3p8qw1"]
 
 [ext_resource type="Script" path="res://scripts/weapons/boomerang.gd" id="1_boomerang"]
+[ext_resource type="Texture2D" path="res://sprites/boomerang.png" id="2_boomerang_sprite"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_boomerang"]
 radius = 8.0
 height = 32.0
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_boomerang"]
 
 [node name="Boomerang" type="Area2D"]
 collision_layer = 4
@@ -17,18 +16,5 @@ script = ExtResource("1_boomerang")
 shape = SubResource("CapsuleShape2D_boomerang")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(1, 0.8, 0.2, 1)
-scale = Vector2(32, 8)
-texture = SubResource("CanvasTexture_boomerang")
-
-[node name="Edge1" type="Sprite2D" parent="."]
-modulate = Color(0.8, 0.4, 0.1, 1)
-position = Vector2(-12, 0)
-scale = Vector2(8, 8)
-texture = SubResource("CanvasTexture_boomerang")
-
-[node name="Edge2" type="Sprite2D" parent="."]
-modulate = Color(0.8, 0.4, 0.1, 1)
-position = Vector2(12, 0)
-scale = Vector2(8, 8)
-texture = SubResource("CanvasTexture_boomerang")
+scale = Vector2(0.06, 0.06)
+texture = ExtResource("2_boomerang_sprite")

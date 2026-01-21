@@ -1,11 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bvn8x7y4qm5qi"]
+[gd_scene load_steps=3 format=3 uid="uid://bvn8x7y4qm5qi"]
 
 [ext_resource type="Script" path="res://scripts/weapons/orbital.gd" id="1_u3yqd"]
+[ext_resource type="Texture2D" path="res://sprites/orbital.png" id="2_orbital_sprite"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_orbital"]
 radius = 12.0
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_1"]
 
 [node name="Orbital" type="Area2D"]
 collision_layer = 4
@@ -18,6 +17,5 @@ shape = SubResource("CircleShape2D_orbital")
 debug_color = Color(0, 1, 1, 0.419608)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-modulate = Color(0.2, 0.8, 1, 1)
-scale = Vector2(20, 20)
-texture = SubResource("CanvasTexture_1")
+scale = Vector2(0.06, 0.06)
+texture = ExtResource("2_orbital_sprite")

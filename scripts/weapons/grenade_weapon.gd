@@ -33,12 +33,17 @@ func _process(delta: float) -> void:
 		if frog_overload_timer <= 0:
 			end_frog_overload()
 	
-	if auto_attack_timer >= cooldown and can_attack():
-		attack()
-		auto_attack_timer = 0.0
+	if auto_attack_timer >= cooldown:
+		print("[GrenadeWeapon] Timer ready, can_attack: ", can_attack())
+		if can_attack():
+			attack()
+			auto_attack_timer = 0.0
 
 func can_attack() -> bool:
-	return player != null and is_instance_valid(player)
+	var result = player != null and is_instance_valid(player)
+	if not result:
+		print("[GrenadeWeapon] can_attack failed - player: ", player, ", valid: ", is_instance_valid(player) if player else false)
+	return result
 
 func attack():
 	if not player:

@@ -249,31 +249,31 @@ func generate_upgrade_options() -> Array:
 		})
 	
 	# TEMPORARY: Always add pulse upgrade to slot 1 for testing
-	var test_option = null
-	if player.unlocked_weapons["pulse"]:
-		test_option = {
-			"type": "upgrade",
-			"upgrade_key": "pulse_damage",
-			"name": "Pulse Damage +30%",
-			"description": "Increases pulse weapon damage"
-		}
-	else:
-		test_option = {
-			"type": "unlock",
-			"weapon": "pulse",
-			"name": "Unlock Pulse Weapon",
-			"description": "AoE damage around player"
-		}
+	# var test_option = null
+	# if player.unlocked_weapons["pulse"]:
+	# 	test_option = {
+	# 		"type": "upgrade",
+	# 		"upgrade_key": "pulse_damage",
+	# 		"name": "Pulse Damage +30%",
+	# 		"description": "Increases pulse weapon damage"
+	# 	}
+	# else:
+	# 	test_option = {
+	# 		"type": "unlock",
+	# 		"weapon": "pulse",
+	# 		"name": "Unlock Pulse Weapon",
+	# 		"description": "AoE damage around player"
+	# 	}
 	
 	# Shuffle and pick 3 random options
 	upgrade_pool.shuffle()
 	var options = []
 	
 	# Force test option into first slot
-	if test_option:
-		options.append(test_option)
+	# if test_option:
+	# 	options.append(test_option)
 	
-	for i in range(min(2, upgrade_pool.size())):
+	for i in range(min(3, upgrade_pool.size())):
 		options.append(upgrade_pool[i])
 	
 	print("[UPGRADE MENU] Total options generated: ", options.size())

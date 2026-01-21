@@ -41,4 +41,5 @@ position = Vector2(640, 360)
 [node name="DialogueSplash" parent="." instance=ExtResource("10_dialogue")]
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+process_mode = 3
 autoplay = true

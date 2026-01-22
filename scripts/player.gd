@@ -6,6 +6,7 @@ var base_speed = 200
 var health = 100
 var max_health = 100
 var gold = 0
+var player_level = 1  # Player level for upgrade progression
 var last_upgrade_threshold = 0  # Track which threshold we last showed the menu at
 var attack_damage = 10
 var attack_range = 100
@@ -71,6 +72,9 @@ var last_horizontal_direction = 1  # 1 = right, -1 = left
 func _ready():
 	print("Player initialized at position: ", position)
 	set_physics_process(true)
+	
+	# Apply permanent skill tree bonuses
+	apply_skill_tree_bonuses()
 	
 	# Load frog textures
 	frog_right_texture = load("res://sprites/FrogRight.png")
@@ -216,7 +220,7 @@ func die():
 	# Get references to HUD, Game Over screen, and GameManager
 	var hud = get_tree().get_first_node_in_group("hud")
 	var game_over = get_node("/root/Main/GameOver")
-	var game_manager = get_node("/root/Main/GameManager")
+	var game_manager = GameManager
 	
 	if hud and game_over:
 		# Update GameManager with final score and save high score
@@ -248,6 +252,94 @@ func add_gold(amount):
 	var hud = get_tree().get_first_node_in_group("hud")
 	if hud and hud.has_method("update_gold"):
 		hud.update_gold(gold)
+	
+	# Check if we can afford an upgrade
+	check_upgrade_threshold()
+
+# Function to add gems (permanent currency)
+func add_gems(amount):
+	# Update local gem count
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud:
+		hud.gems += amount
+		print("Picked up ", amount, " gem(s)! Total this run: ", hud.gems)
+	
+	# Update GameManager's permanent gem count
+	var game_manager = GameManager
+	if game_manager:
+		game_manager.gems += amount
+		print("Total gems across all runs: ", game_manager.gems)
+
+# Check if player has enough gold to trigger upgrade menu
+func check_upgrade_threshold():
+	# Check if player has reached the next upgrade threshold
+	var upgrade_menu = get_tree().get_first_node_in_group("upgrade_menu")
+	if upgrade_menu and upgrade_menu.has_method("calculate_next_threshold"):
+		var next_threshold = upgrade_menu.calculate_next_threshold()
+		
+		# Only show menu if we've reached a new threshold
+		if gold >= next_threshold and next_threshold > last_upgrade_threshold:
+			print("[PLAYER] Reached upgrade threshold! Gold: ", gold, ", Threshold: ", next_threshold)
+			last_upgrade_threshold = next_threshold
+			upgrade_menu.show_upgrade_menu()
+
+# Apply permanent skill tree bonuses from unlocked skills
+func apply_skill_tree_bonuses():
+	var game_manager = GameManager
+	if not game_manager:
+		return
+	
+	# Load skill tree
+	var skill_tree = load("res://scripts/skill_tree.gd").new()
+	skill_tree._initialize_skill_tree()
+	
+	# Get all bonuses from unlocked skills
+	var bonuses = skill_tree.get_total_bonuses(game_manager.unlocked_skills)
+	
+	if bonuses.size() > 0:
+		print("[Player] Applying skill tree bonuses: ", bonuses)
+	
+	# Apply stat bonuses
+	if bonuses.has("max_health"):
+		max_health += int(bonuses["max_health"])
+		health = max_health  # Start with full health
+	
+	if bonuses.has("move_speed"):
+		var speed_bonus = bonuses["move_speed"]
+		base_speed = int(base_speed * (1.0 + speed_bonus))
+		speed = base_speed
+	
+	if bonuses.has("damage_multiplier"):
+		var damage_bonus = bonuses["damage_multiplier"]
+		attack_damage = int(attack_damage * (1.0 + damage_bonus))
+	
+	if bonuses.has("pickup_range"):
+		base_pickup_range += bonuses["pickup_range"]
+		pickup_range = base_pickup_range
+	
+	if bonuses.has("starting_gold"):
+		gold += int(bonuses["starting_gold"])
+		print("[Player] Starting with ", gold, " bonus gold!")
+	
+	if bonuses.has("attack_speed"):
+		# This would affect weapon cooldowns - we'll implement later
+		pass
+	
+	if bonuses.has("extra_lives"):
+		# Extra lives system - implement later
+		pass
+	
+	if bonuses.has("max_weapon_slots"):
+		# Increase max weapon slots - would need to update HUD
+		pass
+	
+	if bonuses.has("exp_multiplier"):
+		# XP bonus - implement later
+		pass
+	
+	if bonuses.has("critical_chance"):
+		# Crit system - implement later
+		pass
 	
 	# Check if player has reached the next upgrade threshold
 	var upgrade_menu = get_tree().get_first_node_in_group("upgrade_menu")

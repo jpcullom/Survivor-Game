@@ -3,9 +3,6 @@ extends CanvasLayer
 # Roguelike progression system - show 3 random upgrades each time
 
 var player = null
-var upgrade_cost = 25
-var base_cost = 25
-var cost_increment = 5
 var total_upgrades = 0
 
 # Track upgrade levels
@@ -44,14 +41,14 @@ func _ready():
 	player = get_tree().get_first_node_in_group("player")
 	print("Upgrade menu initialized, player: ", player)
 
-func calculate_upgrade_cost() -> int:
-	return base_cost + (cost_increment * total_upgrades)
+
 
 func calculate_next_threshold() -> int:
-	var total = 0
-	for i in range(total_upgrades + 1):
-		total += base_cost + (cost_increment * i)
-	return total
+	# Exponential scaling: 15 * (1.35 ^ level)
+	# Level 1: ~20, Level 2: ~27, Level 3: ~37, Level 5: ~67, Level 10: ~273
+	if player:
+		return int(15 * pow(1.35, player.player_level))
+	return 20
 
 func show_upgrade_menu():
 	if not player:
@@ -216,17 +213,11 @@ func apply_upgrade(option_index: int):
 		return
 	
 	var option = current_options[option_index]
-	var cost = calculate_upgrade_cost()
 	
-	if player.gold < cost:
-		print("[UPGRADE] Not enough gold!")
-		return
-	
-	# Deduct gold
-	player.gold -= cost
-	var hud = get_tree().get_first_node_in_group("hud")
-	if hud and hud.has_method("update_gold"):
-		hud.update_gold(player.gold)
+	# No gold check - upgrades are free now, just level up
+	# Increment player level
+	player.player_level += 1
+	print("[UPGRADE MENU] Player leveled up to level ", player.player_level)
 	
 	total_upgrades += 1
 	
@@ -236,7 +227,7 @@ func apply_upgrade(option_index: int):
 	elif option["type"] == "upgrade":
 		apply_weapon_upgrade(option["upgrade_key"])
 	
-	print("[UPGRADE] Applied: ", option["name"])
+	print("[UPGRADE] Applied: ", option["name"], " | New level: ", player.player_level)
 	
 	# Close menu
 	await get_tree().create_timer(0.3).timeout

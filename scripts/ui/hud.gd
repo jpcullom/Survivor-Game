@@ -3,12 +3,15 @@ extends CanvasLayer
 @onready var health_label = $Control/HealthContainer/HealthLabel
 @onready var score_label = $Control/ScoreLabel
 @onready var gold_label = $Control/GoldLabel
+@onready var gold_progress_bar = $Control/GoldProgressBar
+@onready var gem_label = $Control/GemLabel
 @onready var high_score_label = $Control/HighScoreLabel
 @onready var weapon_slots_container = $Control/WeaponSlotsContainer
 
 var player = null
 var score = 0
 var gold = 0
+var gems = 0
 var high_score = 0
 var dialogue_splash = null
 var weapon_slots = []  # Array of weapon slot panels
@@ -44,9 +47,10 @@ func _ready():
 	dialogue_splash = get_node_or_null("/root/Main/DialogueSplash")
 	
 	# Load high score from game manager
-	var game_manager = get_node_or_null("/root/Main/GameManager")
+	var game_manager = GameManager
 	if game_manager:
 		high_score = game_manager.high_score
+		gems = game_manager.gems
 	
 	if not player:
 		print("Warning: HUD couldn't find player!")
@@ -60,9 +64,19 @@ func _ready():
 func _process(delta):
 	if player:
 		health_label.text = "Health: %d/%d" % [player.health, player.max_health]
+		
+		# Update gold progress bar (show progress from last threshold to next)
+		if gold_progress_bar:
+			var prev_threshold = calculate_previous_threshold()
+			var next_threshold = calculate_next_threshold()
+			var gold_since_last = gold - prev_threshold
+			var threshold_range = next_threshold - prev_threshold
+			var progress = float(gold_since_last) / float(threshold_range) if threshold_range > 0 else 0.0
+			gold_progress_bar.value = clamp(progress * 100, 0, 100)
 	
 	score_label.text = "Score: %d" % score
-	gold_label.text = "Gold: %d" % gold
+	gold_label.text = "Gold: %d / %d" % [gold, calculate_next_threshold() if player else 0]
+	gem_label.text = "Gems: %d" % gems
 	
 	if high_score_label:
 		high_score_label.text = "High Score: %d" % high_score
@@ -80,6 +94,18 @@ func add_score(amount):
 
 func update_gold(amount):
 	gold = amount
+
+func calculate_next_threshold() -> int:
+	# Match the threshold calculation from upgrade_menu
+	if player:
+		return int(50 * pow(1.5, player.player_level))
+	return 20
+
+func calculate_previous_threshold() -> int:
+	# Calculate what the previous level's threshold was
+	if player and player.player_level > 1:
+		return int(50 * pow(1.5, player.player_level - 1))
+	return 0
 
 func create_weapon_slots():
 	# Create container if it doesn't exist

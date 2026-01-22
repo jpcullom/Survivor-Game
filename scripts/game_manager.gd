@@ -1,30 +1,34 @@
 extends Node
 
-# GameManager class to handle the overall game state
-class_name GameManager
+# GameManager - Autoload singleton to handle the overall game state
+# Note: No class_name needed since it's an autoload
 
 var is_game_running: bool = false
 var score: int = 0
 var level: int = 1
 var high_score: int = 0
+var gems: int = 0  # Permanent currency for meta-progression
+var unlocked_skills: Array = []  # Array of unlocked skill tree nodes
 
 const SAVE_FILE_PATH = "user://savegame.save"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
     load_game()
-    start_game()
+    # Don't auto-start game - let the title screen handle flow
 
 # Function to save game data
 func save_game():
     var save_file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
     if save_file:
         var save_data = {
-            "high_score": high_score
+            "high_score": high_score,
+            "gems": gems,
+            "unlocked_skills": unlocked_skills
         }
         save_file.store_string(JSON.stringify(save_data))
         save_file.close()
-        print("[GameManager] Game saved! High score: ", high_score)
+        print("[GameManager] Game saved! High score: ", high_score, ", Gems: ", gems)
     else:
         print("[GameManager] Failed to save game")
 
@@ -41,7 +45,9 @@ func load_game():
             if parse_result == OK:
                 var save_data = json.data
                 high_score = save_data.get("high_score", 0)
-                print("[GameManager] Game loaded! High score: ", high_score)
+                gems = save_data.get("gems", 0)
+                unlocked_skills = save_data.get("unlocked_skills", [])
+                print("[GameManager] Game loaded! High score: ", high_score, ", Gems: ", gems, ", Skills: ", unlocked_skills.size())
             else:
                 print("[GameManager] Failed to parse save file")
         else:
@@ -49,6 +55,8 @@ func load_game():
     else:
         print("[GameManager] No save file found, starting fresh")
         high_score = 0
+        gems = 0
+        unlocked_skills = []
 
 # Function to start the game
 func start_game():
@@ -74,7 +82,8 @@ func end_game():
     if score > high_score:
         high_score = score
         print("[GameManager] New high score: ", high_score)
-        save_game()
+    # Always save to persist gems and skill progress
+    save_game()
     # Implement game over logic here
     # Show final score and other relevant information
 

@@ -1,23 +1,18 @@
 extends Node2D
 
 var upgrade_menu_scene = preload("res://scenes/ui/upgrade_menu.tscn")
-var title_screen_scene = preload("res://scenes/ui/title_screen.tscn")
 
 func _ready():
 	print("[MAIN] Game started!")
-	print("[MAIN] Tree paused status before pause: ", get_tree().paused)
-	# Pause immediately for title screen
-	get_tree().paused = true
-	print("[MAIN] Tree paused status after pause: ", get_tree().paused)
+	
+	# Start a new game session in GameManager
+	GameManager.start_game()
+	
+	# Don't show title screen or pause - we come here from skill tree menu ready to play
+	print("[MAIN] Ready to play!")
 	
 	# Make sure window has focus for input
 	get_window().grab_focus()
-	
-	# Show title screen
-	print("[MAIN] Instantiating title screen...")
-	var title_screen = title_screen_scene.instantiate()
-	add_child(title_screen)
-	print("[MAIN] Title screen added to tree")
 	
 	# Load and play background music
 	var music_player = $BackgroundMusic

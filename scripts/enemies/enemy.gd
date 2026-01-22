@@ -46,6 +46,7 @@ var obstacle_detection_radius: float = 60.0  # How far to look for obstacles
 # Preload health bar scene and gold pickup
 var health_bar_scene = preload("res://scenes/ui/health_bar.tscn")
 var gold_pickup_scene = preload("res://scenes/items/gold_pickup.tscn")
+var gem_pickup_scene = preload("res://scenes/items/gem_pickup.tscn")
 
 func _ready():
 	# Add to enemies group for easy player detection
@@ -351,9 +352,16 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	enemy_died.emit(score_value)
 	
-	# Drop gold at enemy position
-	var gold = gold_pickup_scene.instantiate()
-	get_parent().add_child(gold)
-	gold.global_position = global_position
+	# 5% chance to drop gem, otherwise drop gold
+	var drop_gem = randf() < 0.05
+	
+	if drop_gem:
+		var gem = gem_pickup_scene.instantiate()
+		get_parent().add_child(gem)
+		gem.global_position = global_position
+	else:
+		var gold = gold_pickup_scene.instantiate()
+		get_parent().add_child(gold)
+		gold.global_position = global_position
 	
 	queue_free()

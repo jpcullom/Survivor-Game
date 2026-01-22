@@ -10,7 +10,6 @@ extends CanvasLayer
 var dialogue_queue = []
 var current_dialogue_index = 0
 var is_displaying = false
-var game_started = false
 
 # Dictionary mapping score thresholds to dialogue
 var threshold_dialogues = {
@@ -37,9 +36,6 @@ func _ready():
 	add_to_group("dialogue_splash")
 	hide_dialogue()
 	set_process_input(true)
-
-func mark_game_started():
-	game_started = true
 
 func _input(event):
 	if not is_displaying:
@@ -114,11 +110,8 @@ func hide_dialogue():
 		print("[DIALOGUE] Tween callback: hiding elements")
 		dimmer.visible = false
 		dialogue_container.visible = false
-		if game_started:
-			print("[DIALOGUE] Unpausing game")
-			get_tree().paused = false
-		else:
-			print("[DIALOGUE] Game not started yet, keeping paused")
+		print("[DIALOGUE] Unpausing game")
+		get_tree().paused = false
 	)
 
 func check_score_threshold(score: int):

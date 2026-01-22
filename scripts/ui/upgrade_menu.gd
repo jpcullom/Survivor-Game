@@ -3,9 +3,6 @@ extends CanvasLayer
 # Roguelike progression system - show 3 random upgrades each time
 
 var player = null
-var upgrade_cost = 25
-var base_cost = 25
-var cost_increment = 5
 var total_upgrades = 0
 
 # Track upgrade levels
@@ -63,14 +60,10 @@ func _ready():
 	player = get_tree().get_first_node_in_group("player")
 	print("[NEW UPGRADE MENU] Player found: ", player)
 
-func calculate_upgrade_cost() -> int:
-	return base_cost + (cost_increment * total_upgrades)
-
 func calculate_next_threshold() -> int:
-	var total = 0
-	for i in range(total_upgrades + 1):
-		total += base_cost + (cost_increment * i)
-	return total
+	if player:
+		return int(50 * pow(2, player.player_level))
+	return 20
 
 func show_upgrade_menu():
 	if not player:
@@ -302,11 +295,10 @@ func get_weapon_description(weapon_name: String) -> String:
 	return "New weapon"
 
 func display_options():
-	# Update the subtitle to show the cost
+	# Update the subtitle (no cost display in EXP system)
 	var subtitle = get_node_or_null("CenterContainer/VBoxContainer/SubtitleLabel")
 	if subtitle:
-		var cost = calculate_upgrade_cost()
-		subtitle.text = "Cost: " + str(cost) + " gold | Press 1, 2, or 3, then ENTER to confirm"
+		subtitle.text = "Press 1, 2, or 3, then ENTER to confirm"
 	
 	# Update option panels
 	for i in range(3):
@@ -403,17 +395,11 @@ func apply_upgrade(option_index: int):
 		return
 	
 	var option = current_options[option_index]
-	var cost = calculate_upgrade_cost()
 	
-	if player.gold < cost:
-		print("[UPGRADE] Not enough gold!")
-		return
-	
-	# Deduct gold
-	player.gold -= cost
-	var hud = get_tree().get_first_node_in_group("hud")
-	if hud and hud.has_method("update_gold"):
-		hud.update_gold(player.gold)
+	# No gold check - upgrades are free now, just level up
+	# Increment player level
+	player.player_level += 1
+	print("[UPGRADE MENU] Player leveled up to level ", player.player_level)
 	
 	total_upgrades += 1
 	

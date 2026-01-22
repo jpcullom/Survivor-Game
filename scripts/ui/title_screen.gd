@@ -44,22 +44,17 @@ func start_game():
 		return
 		
 	is_showing = false
-	print("[TITLE] Unpausing game...")
+	print("[TITLE] Going to skill tree menu...")
 	
-	# Mark that the game has started so dialogue can unpause
-	var dialogue_splash = get_node_or_null("/root/Main/DialogueSplash")
-	if dialogue_splash and dialogue_splash.has_method("mark_game_started"):
-		dialogue_splash.mark_game_started()
-	
-	# Fade out
+	# Fade out and go to skill tree menu
 	var tween = create_tween()
 	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	tween.tween_property(dimmer, "modulate:a", 0.0, 0.3)
 	tween.parallel().tween_property(title_image, "modulate:a", 0.0, 0.3)
 	tween.parallel().tween_property(start_label, "modulate:a", 0.0, 0.3)
 	tween.tween_callback(func():
-		get_tree().paused = false
-		queue_free()
+		# Keep game paused and load skill tree menu scene
+		get_tree().change_scene_to_file("res://scenes/ui/skill_tree_menu.tscn")
 	)
 
 func start_blink_animation():

@@ -97,14 +97,15 @@ func update_gold(amount):
 
 func calculate_next_threshold() -> int:
 	# Match the threshold calculation from upgrade_menu
+	# Threshold for current level
 	if player:
-		return int(50 * pow(1.5, player.player_level))
-	return 20
+		return int(50 * pow(2, player.player_level))
+	return 100
 
 func calculate_previous_threshold() -> int:
-	# Calculate what the previous level's threshold was
+	# Calculate the previous level's threshold
 	if player and player.player_level > 1:
-		return int(50 * pow(1.5, player.player_level - 1))
+		return int(50 * pow(2, player.player_level - 1))
 	return 0
 
 func create_weapon_slots():

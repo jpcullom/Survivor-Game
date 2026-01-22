@@ -277,6 +277,10 @@ func check_upgrade_threshold():
 	if upgrade_menu and upgrade_menu.has_method("calculate_next_threshold"):
 		var next_threshold = upgrade_menu.calculate_next_threshold()
 		
+		# Debug logging
+		if gold % 50 == 0:  # Log every 50 gold
+			print("[THRESHOLD CHECK] Gold: ", gold, " | Next: ", next_threshold, " | Last: ", last_upgrade_threshold, " | Level: ", player_level)
+		
 		# Only show menu if we've reached a new threshold
 		if gold >= next_threshold and next_threshold > last_upgrade_threshold:
 			print("[PLAYER] Reached upgrade threshold! Gold: ", gold, ", Threshold: ", next_threshold)

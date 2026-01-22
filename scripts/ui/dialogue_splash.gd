@@ -3,30 +3,39 @@ extends CanvasLayer
 @onready var dimmer = $Dimmer
 @onready var dialogue_container = $DialogueContainer
 @onready var portrait = $DialogueContainer/Portrait
+@onready var coyote_portrait = $DialogueContainer/CoyotePortrait
 @onready var text_box = $DialogueContainer/TextBox
+@onready var coyote_text_box = $DialogueContainer/CoyoteTextBox
 @onready var dialogue_label = $DialogueContainer/TextBox/VBoxContainer/DialogueLabel
+@onready var coyote_dialogue_label = $DialogueContainer/CoyoteTextBox/VBoxContainer/DialogueLabel
 @onready var continue_label = $DialogueContainer/TextBox/ContinueLabel
+@onready var coyote_continue_label = $DialogueContainer/CoyoteTextBox/ContinueLabel
 
 var dialogue_queue = []
 var current_dialogue_index = 0
 var is_displaying = false
 
 # Dictionary mapping score thresholds to dialogue
+# Each entry is now a dictionary with 'character' ("frog" or "coyote") and 'text'
 var threshold_dialogues = {
 	1000: [
-		"You dumb dog guys, I'm gonna kill every last one of you!",
-		"I'm gonna beat you up with my gun.",
-		"I'm a frog okay? Get over it."
+		{"character": "frog", "text": "What is this? Some kind of desert?"},
+		{"character": "coyote", "text": "Howdy there, frog."},
+		{"character": "frog", "text": "Ew you're gross, I'm gonna beat you up with my gun."},
+		{"character": "frog", "text": "Unlucky for you, I'm good at shooting stuff."}
 	],
 	5000: [
-		"Are you for real dog things? What's going on? I have dementia.",
-		"Ffffffffff- I mean, oh crap. That's a lot of dog guy blood on my hands.",
-		"Ohhhh, are those guys coyotes? I've been calling them dogs this whole time.",
+		{"character": "frog", "text": "You guys are weird. I hate you."},
+		{"character": "coyote", "text": "Please stop that's really mean."},
+		{"character": "frog", "text": "Sorry."},
+		{"character": "frog", "text": "I'm gonna keep shooting you and using my powerups on you though."},
+		{"character": "coyote", "text": "Aw man :("},
 	],
 	10000: [
-		"I don't want to live anymore, all I know is violence.",
-		"My gun is tired of killing you.",
-		"Take this motherfroggers!"
+		{"character": "frog", "text": "I don't want to live anymore, all I know is violence."},
+		{"character": "coyote", "text": "So does that mean you'll stop?"},
+		{"character": "frog", "text": "..."},
+		{"character": "frog", "text": "No."}
 	]
 }
 
@@ -82,9 +91,26 @@ func display_next_dialogue():
 	print("[DIALOGUE] Tween created with pause mode TWEEN_PAUSE_PROCESS")
 	tween.tween_property(dimmer, "modulate:a", 0.7, 0.3)
 	
-	# Display current dialogue
-	dialogue_label.text = dialogue_queue[current_dialogue_index]
-	continue_label.visible = true
+	# Get current dialogue entry
+	var dialogue_entry = dialogue_queue[current_dialogue_index]
+	var character = dialogue_entry["character"]
+	var text = dialogue_entry["text"]
+	
+	# Show/hide appropriate portrait and text box
+	if character == "frog":
+		portrait.visible = true
+		coyote_portrait.visible = false
+		text_box.visible = true
+		coyote_text_box.visible = false
+		dialogue_label.text = text
+		continue_label.visible = true
+	elif character == "coyote":
+		portrait.visible = false
+		coyote_portrait.visible = true
+		text_box.visible = false
+		coyote_text_box.visible = true
+		coyote_dialogue_label.text = text
+		coyote_continue_label.visible = true
 
 func advance_dialogue():
 	print("[DIALOGUE] advance_dialogue called, index: ", current_dialogue_index)
@@ -95,7 +121,23 @@ func advance_dialogue():
 		hide_dialogue()
 	else:
 		print("[DIALOGUE] Showing next dialogue line")
-		dialogue_label.text = dialogue_queue[current_dialogue_index]
+		var dialogue_entry = dialogue_queue[current_dialogue_index]
+		var character = dialogue_entry["character"]
+		var text = dialogue_entry["text"]
+		
+		# Show/hide appropriate portrait and text box
+		if character == "frog":
+			portrait.visible = true
+			coyote_portrait.visible = false
+			text_box.visible = true
+			coyote_text_box.visible = false
+			dialogue_label.text = text
+		elif character == "coyote":
+			portrait.visible = false
+			coyote_portrait.visible = true
+			text_box.visible = false
+			coyote_text_box.visible = true
+			coyote_dialogue_label.text = text
 
 func hide_dialogue():
 	print("[DIALOGUE] hide_dialogue called")

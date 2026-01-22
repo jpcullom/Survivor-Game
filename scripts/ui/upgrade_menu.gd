@@ -62,8 +62,9 @@ func _ready():
 
 func calculate_next_threshold() -> int:
 	if player:
+		# Threshold for current level
 		return int(50 * pow(2, player.player_level))
-	return 20
+	return 100
 
 func show_upgrade_menu():
 	if not player:
@@ -400,6 +401,7 @@ func apply_upgrade(option_index: int):
 	# Increment player level
 	player.player_level += 1
 	print("[UPGRADE MENU] Player leveled up to level ", player.player_level)
+	print("[UPGRADE MENU] Next threshold will be: ", calculate_next_threshold())
 	
 	total_upgrades += 1
 	

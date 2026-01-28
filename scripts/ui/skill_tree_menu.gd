@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var skills_container = $Control/MarginContainer/VBoxContainer/ScrollContainer/SkillsContainer
 @onready var scroll_container = $Control/MarginContainer/VBoxContainer/ScrollContainer
 @onready var start_game_button = $Control/MarginContainer/VBoxContainer/ButtonContainer/StartGameButton
+@onready var clear_data_button = $Control/ClearDataButton
 
 var game_manager = null
 var skill_tree = null
@@ -79,10 +80,10 @@ func update_selection():
 			button.modulate = Color(1.5, 1.5, 0.8)  # Bright highlight
 			button.grab_focus()
 			
-			# Special handling for Start Game button (last in array)
-			if button == start_game_button:
-				print("[SkillTree] Start Game button selected")
-				# No scrolling needed for bottom button
+			# Special handling for buttons outside the scroll container
+			if button == start_game_button or button == clear_data_button:
+				print("[SkillTree] Special button selected: ", button.text)
+				# No scrolling needed for buttons outside scroll container
 			else:
 				# Scroll to make button visible
 				await get_tree().process_frame  # Wait for layout
@@ -143,6 +144,9 @@ func display_skills():
 	# Reset purchasable buttons array
 	purchasable_buttons.clear()
 	selected_index = 0
+	
+	# Add Clear Data button to navigation (at the top)
+	purchasable_buttons.append(clear_data_button)
 	
 	# Group skills by tier
 	var tier_1_skills = []
@@ -310,3 +314,12 @@ func _on_start_game_button_pressed():
 	print("[SkillTree] Pause state after unpause: ", get_tree().paused)
 	print("[SkillTree] Changing scene to main.tscn...")
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+func _on_clear_data_button_pressed():
+	print("[SkillTree] Clear Data button pressed!")
+	if game_manager:
+		game_manager.clear_save_data()
+		# Refresh the display to show 0 gems and no unlocked skills
+		update_gem_count()
+		display_skills()
+		print("[SkillTree] Save data cleared and display refreshed")

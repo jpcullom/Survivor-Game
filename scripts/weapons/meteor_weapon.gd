@@ -74,6 +74,7 @@ func attack():
 func spawn_meteor(target_enemy):
 	var meteor = meteor_scene.instantiate()
 	meteor.damage = damage
+	meteor.player = player  # Pass player reference for crit damage
 	meteor.target_position = target_enemy.global_position
 	
 	# Calculate spawn position at 45-degree angle from top of screen

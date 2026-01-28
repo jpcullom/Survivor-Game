@@ -4,6 +4,7 @@ var damage: int = 40
 var speed: float = 600.0
 var target_position: Vector2 = Vector2.ZERO
 var impact_radius: float = 60.0
+var player = null  # Reference to player for crit damage
 
 var velocity: Vector2 = Vector2.ZERO
 var has_impacted: bool = false
@@ -66,7 +67,7 @@ func impact():
 			var distance = global_position.distance_to(enemy.global_position)
 			if distance <= impact_radius:
 				if enemy.has_method("take_damage"):
-					enemy.take_damage(damage)
+					enemy.take_damage(player.get_damage_with_crit(damage))
 					print("[Meteor] Hit enemy at distance ", distance)
 	
 	# Visual impact effect

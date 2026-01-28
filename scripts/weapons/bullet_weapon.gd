@@ -64,6 +64,7 @@ func attack():
 		player.get_parent().add_child(bullet)
 		bullet.global_position = player.global_position
 		bullet.damage = damage
+		bullet.player = player  # Pass player reference for crit damage
 		
 		# Increase bullet speed during Frog Overload
 		if frog_overload_active:

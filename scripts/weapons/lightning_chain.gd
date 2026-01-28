@@ -85,7 +85,7 @@ func hit_target(target):
 	
 	# Deal damage
 	if target.has_method("take_damage"):
-		target.take_damage(damage)
+		target.take_damage(player.get_damage_with_crit(damage))
 		print("[LightningChain] Hit enemy! Dealing ", damage, " damage (", chains_remaining, " chains left)")
 	
 	# Update visual line

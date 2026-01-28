@@ -23,6 +23,9 @@ var weapon_levels = {
 	"meteor_damage": 0,
 	"meteor_cooldown": 0,
 	"meteor_count": 0,
+	"healing_amount": 0,
+	"healing_rate": 0,
+	"aura_size": 0,
 	"magnet": 0,
 	"speed_boost": 0,
 	"crown": 0
@@ -120,14 +123,15 @@ func generate_upgrade_options() -> Array:
 		"description": "Add +" + str(next_crown_bonus) + " to each gold pickup (Current level: " + str(weapon_levels["crown"]) + ")"
 	})
 	
-	# Add weapon unlocks for locked weapons (cap at 6 weapons total)
+	# Add weapon unlocks for locked weapons (cap at max_weapon_slots)
 	var unlocked_count = 0
 	for weapon_name in player.unlocked_weapons:
 		if player.unlocked_weapons[weapon_name]:
 			unlocked_count += 1
 	
 	# Only offer weapon unlocks if we haven't reached the cap
-	if unlocked_count < 6:
+	var max_weapons = player.max_weapon_slots if "max_weapon_slots" in player else 6
+	if unlocked_count < max_weapons:
 		for weapon_name in player.unlocked_weapons:
 			if not player.unlocked_weapons[weapon_name]:
 				upgrade_pool.append({
@@ -242,6 +246,26 @@ func generate_upgrade_options() -> Array:
 			"description": "Strike more frequently with meteors"
 		})
 	
+	if player.unlocked_weapons["healing_aura"]:
+		upgrade_pool.append({
+			"type": "upgrade",
+			"upgrade_key": "healing_amount",
+			"name": "Healing Power +1",
+			"description": "Increase health restored per tick"
+		})
+		upgrade_pool.append({
+			"type": "upgrade",
+			"upgrade_key": "healing_rate",
+			"name": "Healing Rate +20%",
+			"description": "Heal more frequently"
+		})
+		upgrade_pool.append({
+			"type": "upgrade",
+			"upgrade_key": "aura_size",
+			"name": "Aura Size +15",
+			"description": "Increase healing aura radius"
+		})
+	
 	# TEMPORARY: Always add pulse upgrade to slot 1 for testing
 	# var test_option = null
 	# if player.unlocked_weapons["pulse"]:
@@ -293,6 +317,8 @@ func get_weapon_description(weapon_name: String) -> String:
 			return "Explosive projectiles"
 		"meteor":
 			return "Rain meteors from above at random enemies"
+		"healing_aura":
+			return "Passive healing aura - restore health over time"
 	return "New weapon"
 
 func display_options():
@@ -516,6 +542,15 @@ func apply_weapon_upgrade(upgrade_key: String):
 				player.meteor_weapon.upgrade_count()
 				if level >= 5:
 					trigger_frog_overload = true
+		"healing_amount":
+			if player.healing_aura_weapon:
+				player.healing_aura_weapon.upgrade_heal_amount()
+		"healing_rate":
+			if player.healing_aura_weapon:
+				player.healing_aura_weapon.upgrade_heal_rate()
+		"aura_size":
+			if player.healing_aura_weapon:
+				player.healing_aura_weapon.upgrade_aura_size()
 		"magnet":
 			player.upgrade_magnet()
 			print("[UPGRADE] Magnet level: ", player.magnet_level, ", pickup range: ", player.pickup_range)

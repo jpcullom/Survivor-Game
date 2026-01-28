@@ -55,7 +55,7 @@ func explode():
 			var distance = global_position.distance_to(enemy.global_position)
 			if distance <= explosion_radius:
 				if enemy.has_method("take_damage"):
-					enemy.take_damage(damage)
+					enemy.take_damage(player.get_damage_with_crit(damage))
 					print("[Grenade] Hit enemy at distance ", distance)
 	
 	# Visual explosion effect

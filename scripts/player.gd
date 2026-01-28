@@ -18,6 +18,10 @@ var invulnerability_time = 1.0  # Seconds of invulnerability after taking damage
 var pickup_range = 50.0
 var base_pickup_range = 50.0
 
+# Lives system
+var lives = 1  # Current lives remaining
+var extra_lives = 0  # Bonus lives from skill tree
+
 # Dodge roll stats
 var is_dodging = false
 var dodge_speed_multiplier = 2.5
@@ -33,6 +37,7 @@ var boomerang_weapon = null
 var lightning_weapon = null
 var grenade_weapon = null
 var meteor_weapon = null
+var healing_aura_weapon = null
 var current_weapon = null
 var weapon_index = 0  # 0 = pulse, 1 = bullet
 
@@ -44,14 +49,21 @@ var unlocked_weapons = {
 	"boomerang": false,
 	"lightning": false,
 	"grenade": false,
-	"meteor": false
+	"meteor": false,
+	"healing_aura": false
 }
+var max_weapon_slots = 6  # How many weapons can be equipped
 
 # Passive items
 var magnet_level = 0
 var speed_boost_level = 0
 var crown_level = 0
 var gold_value_multiplier = 1.0
+var damage_multiplier = 1.0  # Skill tree bonus for all weapons
+var critical_chance = 0.0  # Chance to deal critical damage
+var critical_multiplier = 2.0  # Crit damage multiplier
+var attack_speed_multiplier = 1.0  # Affects weapon cooldowns (higher = faster)
+var exp_multiplier = 1.0  # Affects gold/experience gains
 
 # Load weapon scripts at runtime (adjust paths if your weapon scripts are in a different folder)
 # Use load() instead of preload() so missing files don't error out at script parse time.
@@ -62,6 +74,7 @@ var BoomerangWeapon = load("res://scripts/weapons/boomerang_weapon.gd")
 var LightningWeapon = load("res://scripts/weapons/lightning_weapon.gd")
 var GrenadeWeapon = load("res://scripts/weapons/grenade_weapon.gd")
 var MeteorWeapon = load("res://scripts/weapons/meteor_weapon.gd")
+var HealingAuraWeapon = load("res://scripts/weapons/healing_aura_weapon.gd")
 
 # Sprite references
 @onready var sprite = $Sprite2D
@@ -85,6 +98,10 @@ func _ready():
 		bullet_weapon = BulletWeapon.new()
 		bullet_weapon.player = self
 		add_child(bullet_weapon)
+		# Apply damage multiplier to starting weapon
+		bullet_weapon.damage = int(bullet_weapon.damage * damage_multiplier)
+		# Apply attack speed multiplier to starting weapon
+		bullet_weapon.cooldown = bullet_weapon.cooldown / attack_speed_multiplier
 		current_weapon = bullet_weapon
 		print("Starting with Bullet weapon")
 
@@ -215,6 +232,18 @@ func take_damage(amount):
 
 # Function to handle player death
 func die():
+	# Check if we have extra lives
+	if lives > 1:
+		lives -= 1
+		health = max_health  # Revive with full health
+		invulnerable = true
+		print("[Player] Extra life used! Lives remaining: ", lives)
+		
+		# Add invulnerability period after revival
+		await get_tree().create_timer(invulnerability_time).timeout
+		invulnerable = false
+		return  # Don't trigger game over
+	
 	print("Player has died!")
 	
 	# Get references to HUD, Game Over screen, and GameManager
@@ -235,6 +264,17 @@ func die():
 	visible = false
 	set_physics_process(false)
 
+# Critical hit system
+func roll_critical() -> bool:
+	return randf() < critical_chance
+
+func get_damage_with_crit(base_damage: int) -> int:
+	if roll_critical():
+		var crit_damage = int(base_damage * critical_multiplier)
+		print("[CRIT!] ", base_damage, " -> ", crit_damage)
+		return crit_damage
+	return base_damage
+
 # Function to add gold
 func add_gold(amount):
 	# Apply crown bonus (flat amount based on level)
@@ -242,6 +282,8 @@ func add_gold(amount):
 	for i in range(1, crown_level + 1):
 		crown_bonus += i * 5
 	var actual_amount = amount + crown_bonus
+	# Apply exp multiplier from skill tree
+	actual_amount = int(actual_amount * exp_multiplier)
 	gold += actual_amount
 	if crown_level > 0:
 		print("Picked up ", amount, " gold (+", crown_bonus, " crown bonus = ", actual_amount, ")! Total: ", gold)
@@ -316,6 +358,9 @@ func apply_skill_tree_bonuses():
 	if bonuses.has("damage_multiplier"):
 		var damage_bonus = bonuses["damage_multiplier"]
 		attack_damage = int(attack_damage * (1.0 + damage_bonus))
+		# Store multiplier for weapon damage
+		damage_multiplier = 1.0 + damage_bonus
+		print("[Player] Damage multiplier: ", damage_multiplier)
 	
 	if bonuses.has("pickup_range"):
 		base_pickup_range += bonuses["pickup_range"]
@@ -326,24 +371,25 @@ func apply_skill_tree_bonuses():
 		print("[Player] Starting with ", gold, " bonus gold!")
 	
 	if bonuses.has("attack_speed"):
-		# This would affect weapon cooldowns - we'll implement later
-		pass
+		attack_speed_multiplier = 1.0 + bonuses["attack_speed"]
+		print("[Player] Attack speed multiplier: ", attack_speed_multiplier)
 	
 	if bonuses.has("extra_lives"):
-		# Extra lives system - implement later
-		pass
+		extra_lives = int(bonuses["extra_lives"])
+		lives = 1 + extra_lives
+		print("[Player] Total lives: ", lives)
 	
 	if bonuses.has("max_weapon_slots"):
-		# Increase max weapon slots - would need to update HUD
-		pass
+		max_weapon_slots = 6 + int(bonuses["max_weapon_slots"])
+		print("[Player] Max weapon slots: ", max_weapon_slots)
 	
 	if bonuses.has("exp_multiplier"):
-		# XP bonus - implement later
-		pass
+		exp_multiplier = 1.0 + bonuses["exp_multiplier"]
+		print("[Player] EXP multiplier: ", exp_multiplier)
 	
 	if bonuses.has("critical_chance"):
-		# Crit system - implement later
-		pass
+		critical_chance = bonuses["critical_chance"]
+		print("[Player] Critical chance: ", critical_chance * 100, "%")
 	
 	# Check if player has reached the next upgrade threshold
 	var upgrade_menu = get_tree().get_first_node_in_group("upgrade_menu")
@@ -394,12 +440,20 @@ func unlock_weapon(weapon_name: String):
 				pulse_weapon = PulseWeapon.new()
 				pulse_weapon.player = self
 				add_child(pulse_weapon)
+				# Apply damage multiplier
+				pulse_weapon.damage = int(pulse_weapon.damage * damage_multiplier)
+				# Apply attack speed multiplier
+				pulse_weapon.cooldown = pulse_weapon.cooldown / attack_speed_multiplier
 				print("Pulse weapon equipped!")
 		"orbital":
 			if OrbitalWeapon and not orbital_weapon:
 				orbital_weapon = OrbitalWeapon.new()
 				orbital_weapon.player = self
 				add_child(orbital_weapon)
+				# Apply damage multiplier
+				orbital_weapon.damage = int(orbital_weapon.damage * damage_multiplier)
+				# Apply attack speed multiplier
+				orbital_weapon.cooldown = orbital_weapon.cooldown / attack_speed_multiplier
 				orbital_weapon.spawn_orbitals()
 				print("Orbital weapon equipped with ", orbital_weapon.orbital_count, " orbitals!")
 		"boomerang":
@@ -407,22 +461,45 @@ func unlock_weapon(weapon_name: String):
 				boomerang_weapon = BoomerangWeapon.new()
 				boomerang_weapon.player = self
 				add_child(boomerang_weapon)
+				# Apply damage multiplier
+				boomerang_weapon.damage = int(boomerang_weapon.damage * damage_multiplier)
+				# Apply attack speed multiplier
+				boomerang_weapon.cooldown = boomerang_weapon.cooldown / attack_speed_multiplier
 				print("Boomerang weapon equipped!")
 		"lightning":
 			if LightningWeapon and not lightning_weapon:
 				lightning_weapon = LightningWeapon.new()
 				lightning_weapon.player = self
 				add_child(lightning_weapon)
+				# Apply damage multiplier
+				lightning_weapon.damage = int(lightning_weapon.damage * damage_multiplier)
+				# Apply attack speed multiplier
+				lightning_weapon.cooldown = lightning_weapon.cooldown / attack_speed_multiplier
 				print("Lightning weapon equipped!")
 		"grenade":
 			if GrenadeWeapon and not grenade_weapon:
 				grenade_weapon = GrenadeWeapon.new()
 				grenade_weapon.player = self
 				add_child(grenade_weapon)
+				# Apply damage multiplier
+				grenade_weapon.damage = int(grenade_weapon.damage * damage_multiplier)
+				# Apply attack speed multiplier
+				grenade_weapon.cooldown = grenade_weapon.cooldown / attack_speed_multiplier
 				print("Grenade weapon equipped!")
 		"meteor":
 			if MeteorWeapon and not meteor_weapon:
 				meteor_weapon = MeteorWeapon.new()
 				meteor_weapon.player = self
 				add_child(meteor_weapon)
+				# Apply damage multiplier
+				meteor_weapon.damage = int(meteor_weapon.damage * damage_multiplier)
+				# Apply attack speed multiplier
+				meteor_weapon.cooldown = meteor_weapon.cooldown / attack_speed_multiplier
 				print("Meteor weapon equipped!")
+		
+		"healing_aura":
+			if HealingAuraWeapon and not healing_aura_weapon:
+				healing_aura_weapon = HealingAuraWeapon.new()
+				healing_aura_weapon.player = self
+				add_child(healing_aura_weapon)
+				print("Healing Aura weapon equipped!")

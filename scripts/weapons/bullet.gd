@@ -4,6 +4,7 @@ var speed = 400.0
 var damage = 10
 var direction = Vector2.ZERO
 var lifetime = 2.0  # Seconds before bullet despawns
+var player = null  # Reference to player for crit damage
 
 # Preload impact effect
 const impact_scene = preload("res://scenes/weapons/bullet_impact.tscn")
@@ -36,7 +37,7 @@ func _on_body_entered(body):
 	if body.is_in_group("enemies"):
 		# Damage enemy
 		if body.has_method("take_damage"):
-			body.take_damage(damage)
+			body.take_damage(player.get_damage_with_crit(damage))
 		# Spawn impact effect
 		spawn_impact_effect()
 		# Destroy bullet

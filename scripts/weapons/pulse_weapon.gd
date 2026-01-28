@@ -74,7 +74,7 @@ func attack():
 		if distance <= attack_range:
 			print("Hit enemy at distance: ", distance)
 			if enemy.has_method("take_damage"):
-				enemy.take_damage(damage)
+				enemy.take_damage(player.get_damage_with_crit(damage))
 	
 	# Start cooldown
 	start_cooldown()

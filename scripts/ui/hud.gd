@@ -1,12 +1,14 @@
 extends CanvasLayer
 
 @onready var health_label = $Control/HealthContainer/HealthLabel
+@onready var health_progress_bar = $Control/HealthProgressBar
 @onready var score_label = $Control/ScoreLabel
 @onready var gold_label = $Control/GoldLabel
 @onready var gold_progress_bar = $Control/GoldProgressBar
 @onready var gem_label = $Control/GemLabel
 @onready var high_score_label = $Control/HighScoreLabel
 @onready var weapon_slots_container = $Control/WeaponSlotsContainer
+@onready var lives_label = $Control/LivesLabel
 
 var player = null
 var score = 0
@@ -15,7 +17,6 @@ var gems = 0
 var high_score = 0
 var dialogue_splash = null
 var weapon_slots = []  # Array of weapon slot panels
-const MAX_WEAPON_SLOTS = 6
 
 # Weapon name to display mapping
 var weapon_display_names = {
@@ -25,7 +26,8 @@ var weapon_display_names = {
 	"boomerang": "R",
 	"lightning": "L",
 	"grenade": "G",
-	"meteor": "M"
+	"meteor": "M",
+	"healing_aura": "H"
 }
 
 # Weapon sprites
@@ -58,12 +60,31 @@ func _ready():
 	if not dialogue_splash:
 		print("Warning: HUD couldn't find DialogueSplash!")
 	
+	# Create lives label if it doesn't exist
+	if not lives_label:
+		lives_label = Label.new()
+		lives_label.name = "LivesLabel"
+		$Control.add_child(lives_label)
+		lives_label.add_theme_font_size_override("font_size", 20)
+		lives_label.anchor_left = 1.0
+		lives_label.anchor_right = 1.0
+		lives_label.offset_left = -100
+		lives_label.offset_right = -10
+		lives_label.offset_top = 10
+		lives_label.offset_bottom = 40
+		lives_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	
 	# Create weapon slots
 	create_weapon_slots()
 
 func _process(delta):
 	if player:
 		health_label.text = "Health: %d/%d" % [player.health, player.max_health]
+		
+		# Update health progress bar
+		if health_progress_bar:
+			var health_percent = (float(player.health) / float(player.max_health)) * 100 if player.max_health > 0 else 0
+			health_progress_bar.value = clamp(health_percent, 0, 100)
 		
 		# Update gold progress bar (show progress from last threshold to next)
 		if gold_progress_bar:
@@ -77,6 +98,15 @@ func _process(delta):
 	score_label.text = "Score: %d" % score
 	gold_label.text = "Gold: %d / %d" % [gold, calculate_next_threshold() if player else 0]
 	gem_label.text = "Gems: %d" % gems
+	
+	# Update lives display
+	if lives_label and player and "lives" in player:
+		var heart_text = ""
+		for i in range(player.lives):
+			heart_text += "♥ "
+		lives_label.text = heart_text.strip_edges()
+		# Color red
+		lives_label.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2))
 	
 	if high_score_label:
 		high_score_label.text = "High Score: %d" % high_score
@@ -120,11 +150,27 @@ func create_weapon_slots():
 		weapon_slots_container.anchor_left = 0.5
 		weapon_slots_container.anchor_right = 0.5
 		weapon_slots_container.anchor_top = 0.0
-		weapon_slots_container.offset_left = -130  # Half of approximate width (6 slots * 40 + 5 gaps)
 		weapon_slots_container.offset_top = 10
 	
+	# Clear existing slots
+	for slot in weapon_slots:
+		if is_instance_valid(slot):
+			slot.queue_free()
+	weapon_slots.clear()
+	
+	# Get max weapon slots from player
+	var max_slots = 6  # Default
+	if player and "max_weapon_slots" in player:
+		max_slots = player.max_weapon_slots
+	
+	# Update container offset for centering
+	var slot_width = 40
+	var separation = 5
+	var total_width = max_slots * slot_width + (max_slots - 1) * separation
+	weapon_slots_container.offset_left = -total_width / 2
+	
 	# Create weapon slot panels
-	for i in range(MAX_WEAPON_SLOTS):
+	for i in range(max_slots):
 		var slot_panel = Panel.new()
 		slot_panel.custom_minimum_size = Vector2(40, 40)
 		
@@ -160,9 +206,10 @@ func update_weapon_slots():
 		return
 	
 	var slot_index = 0
-	for weapon_name in ["bullet", "pulse", "orbital", "boomerang", "lightning", "grenade", "meteor"]:
+	var max_slots = weapon_slots.size()  # Use actual slot count
+	for weapon_name in ["bullet", "pulse", "orbital", "boomerang", "lightning", "grenade", "meteor", "healing_aura"]:
 		if player.unlocked_weapons[weapon_name]:
-			if slot_index < MAX_WEAPON_SLOTS:
+			if slot_index < max_slots:
 				var slot_panel = weapon_slots[slot_index]
 				var texture_rect = slot_panel.get_node("WeaponTexture")
 				var label = slot_panel.get_node("WeaponLabel")

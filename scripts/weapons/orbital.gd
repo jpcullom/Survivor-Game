@@ -56,9 +56,9 @@ func set_angle(angle: float) -> void:
 func _on_body_entered(body):
 	if body.is_in_group("enemies"):
 		if body.has_method("take_damage"):
-			body.take_damage(damage)
+			body.take_damage(player.get_damage_with_crit(damage))
 
 func _on_area_entered(area):
 	if area.is_in_group("enemies"):
 		if area.has_method("take_damage"):
-			area.take_damage(damage)
+			area.take_damage(player.get_damage_with_crit(damage))
